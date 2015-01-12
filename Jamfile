@@ -1,0 +1,35 @@
+CCFLAGS on typeordie = -Werror -Wall -Wextra ;
+LINKLIBS on typeordie = -lm -lSDL -lSDL_mixer -lGL -lGLU -lstdc++ ;
+Main typeordie :
+    App.cpp
+    Award.cpp
+    Boss.cpp
+    Camera.cpp
+    Enemy.cpp
+    EnemyWave.cpp
+    Explosion.cpp
+    FontManager.cpp
+    Game.cpp
+    HighScores.cpp
+    Laser.cpp
+    Matrix.cpp
+    Menu.cpp
+    MenuHighScores.cpp
+    MenuItem.cpp
+    MenuMain.cpp
+    MenuNewHighScore.cpp
+    MenuPause.cpp
+    MenuScreen.cpp
+    PhraseBook.cpp
+    Phrase.cpp
+    Player.cpp
+    Powerup.cpp
+    Random.cpp
+    Shape.cpp
+    SoundManager.cpp
+    TextureManager.cpp
+    Utils.cpp
+    Vector.cpp
+;
+
+
