@@ -88,6 +88,7 @@ namespace typing
         std::sort(m_waves.begin(), m_waves.end(), EnemyWaveSort());
 
         m_bossWaves.push_back(EnemyWavePtr(new MissileBossEnemyWave));
+        m_bossWaves.push_back(EnemyWavePtr(new ChargeBossEnemyWave));
         std::sort(m_bossWaves.begin(), m_bossWaves.end(), EnemyWaveSort());
 
         // Initialise powerups

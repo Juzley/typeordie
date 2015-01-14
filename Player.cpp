@@ -38,6 +38,7 @@ namespace typing
             green = static_cast<float>(m_health) / static_cast<float>(HEALTH_MAX / 2);
         }
 
+        // TODO: Flash this faster based on how well the player is doing?
         // Alpha fades between 0.1 and 0.5
         const float alpha = 0.1f + (1.0f + sinf(GAME.GetTime())) / 5.0f;
 
@@ -45,7 +46,7 @@ namespace typing
             glTranslatef(PLAYER_ORIGIN.GetX(), PLAYER_ORIGIN.GetY(), PLAYER_ORIGIN.GetZ());
             glRotatef(45.0f, 0.0f, 0.0f, 1.0f);
             glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
-            glScalef(32.0f, 32.0f, 32.0f);
+            glScalef(40.0f, 40.0f, 40.0f);
 
             DrawCube(ColourRGBA(red, green, 0.0f, alpha), ColourRGBA(0.8f, 1.0f, 0.8f, 1.0f));
 
