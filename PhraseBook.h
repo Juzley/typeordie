@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/array.hpp>
 #include <boost/random.hpp>
 
@@ -28,11 +28,11 @@ namespace typing
 
     private:
         // Typedefs
-        typedef boost::shared_ptr<std::string>          PhrasePtr;
+        typedef std::shared_ptr<std::string>          PhrasePtr;
         typedef std::vector<PhrasePtr>                  PhraseVector;
-        typedef boost::shared_ptr<PhraseVector>         PhraseVectorPtr;
+        typedef std::shared_ptr<PhraseVector>         PhraseVectorPtr;
         typedef boost::array<PhraseVectorPtr, PL_COUNT> PhraseArray;
-        typedef boost::shared_ptr<PhraseArray>          PhraseArrayPtr;
+        typedef std::shared_ptr<PhraseArray>          PhraseArrayPtr;
         typedef std::map<char, PhraseArrayPtr>          PhraseMap;
 
         // Consts/Enums

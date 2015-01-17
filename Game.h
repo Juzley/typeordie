@@ -5,7 +5,6 @@
 #include <list>
 #include <string>
 #include <vector>
-#include <boost/shared_ptr.hpp>
 #include <SDL/SDL_mixer.h>
 #include "Entity.h"
 #include "Timer.h"

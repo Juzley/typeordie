@@ -2,6 +2,7 @@
 #define _EXPLOSION_H_
 
 #include <string>
+#include <memory>
 #include "Vector.h"
 #include "Effect.h"
 #include "Colour.h"
@@ -51,7 +52,7 @@ namespace typing
         float             m_age;
         float             m_fadeSpeed;
     };
-    typedef boost::shared_ptr<Explosion> ExplosionPtr;
+    typedef std::shared_ptr<Explosion> ExplosionPtr;
 }
 
 #endif // _EXPLOSION_H_

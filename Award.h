@@ -2,6 +2,7 @@
 #define _AWARD_H_
 
 #include <string>
+#include <memory>
 #include "Effect.h"
 #include "Vector.h"
 #include "Colour.h"
@@ -58,7 +59,7 @@ namespace typing
         AwardType        m_type;
         float            m_startTime;
     };
-    typedef boost::shared_ptr<Award> AwardPtr;
+    typedef std::shared_ptr<Award> AwardPtr;
 }
 
 #endif // _AWARD_H_

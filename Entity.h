@@ -1,9 +1,7 @@
 #ifndef _ENTITY_H_
 #define _ENTITY_H_
 
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
-
+#include <memory>
 #include "Vector.h"
 #include "BBox.h"
 
@@ -80,8 +78,8 @@ namespace typing
             return 0;
         }
     };
-    typedef boost::shared_ptr<Entity> EntityPtr;
-    typedef boost::weak_ptr<Entity>   EntityWeakPtr;
+    typedef std::shared_ptr<Entity> EntityPtr;
+    typedef std::weak_ptr<Entity>   EntityWeakPtr;
 }
 
 #endif // _ENTITY_H_

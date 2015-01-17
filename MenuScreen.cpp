@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <boost/mem_fn.hpp>
 #include "MenuScreen.h"
 

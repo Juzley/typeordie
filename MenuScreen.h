@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <SDL/SDL.h>
 #include "MenuItem.h"
 
@@ -56,7 +56,7 @@ namespace typing
         // Members
         MenuItems m_menuItems;
     };
-    typedef boost::shared_ptr<MenuScreen> MenuScreenPtr;
+    typedef std::shared_ptr<MenuScreen> MenuScreenPtr;
 }
 
 #endif // _MENU_SCREEN_H_

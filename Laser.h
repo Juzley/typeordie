@@ -2,7 +2,7 @@
 #define _LASER_H_
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "Vector.h"
 #include "Effect.h"
 #include "Colour.h"
@@ -41,7 +41,7 @@ namespace typing
         ColourRGB        m_col;
         bool             m_playedSound;
     };
-    typedef boost::shared_ptr<Laser> LaserPtr;
+    typedef std::shared_ptr<Laser> LaserPtr;
 }
 
 #endif // _LASER_H_

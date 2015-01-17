@@ -4,7 +4,6 @@
 #include <string>
 #include <map>
 #include <memory>
-#include <boost/shared_ptr.hpp>
 #include "Colour.h"
 
 namespace typing
@@ -44,7 +43,7 @@ namespace typing
         unsigned int m_charHeight;
         CharMap      m_charMap;
     };
-    typedef boost::shared_ptr<Font> FontPtr;
+    typedef std::shared_ptr<Font> FontPtr;
 
     class FontManager
     {

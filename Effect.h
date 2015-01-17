@@ -1,7 +1,7 @@
 #ifndef _EFFECT_H_
 #define _EFFECT_H_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace typing
 {
@@ -23,7 +23,7 @@ namespace typing
         {
         }
     };
-    typedef boost::shared_ptr<Effect> EffectPtr;
+    typedef std::shared_ptr<Effect> EffectPtr;
 }
 
 #endif // _EFFECT_H_

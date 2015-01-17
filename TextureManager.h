@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
@@ -25,7 +25,7 @@ namespace typing
     private:
         GLuint m_id;
     };
-    typedef boost::shared_ptr<Texture> TexturePtr;
+    typedef std::shared_ptr<Texture> TexturePtr;
 
     class TextureManager
     {

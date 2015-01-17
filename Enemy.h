@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "Entity.h"
 #include "Phrase.h"
 
@@ -87,7 +88,7 @@ namespace typing
         juzutil::Vector3 m_dir;
         float            m_angle;
     };
-    typedef boost::shared_ptr<BasicEnemy> BasicEnemyPtr;
+    typedef std::shared_ptr<BasicEnemy> BasicEnemyPtr;
     typedef std::vector<BasicEnemyPtr> BasicEnemyVec;
 
 
@@ -169,7 +170,7 @@ namespace typing
         juzutil::Vector3 m_dir;
         float            m_angle;
     };
-    typedef boost::shared_ptr<AccelEnemy> AccelEnemyPtr;
+    typedef std::shared_ptr<AccelEnemy> AccelEnemyPtr;
     typedef std::vector<AccelEnemyPtr> AccelEnemyVec;
 
 
@@ -251,7 +252,7 @@ namespace typing
         float            m_angle;
         
     };
-    typedef boost::shared_ptr<Missile> MissilePtr;
+    typedef std::shared_ptr<Missile> MissilePtr;
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -329,7 +330,7 @@ namespace typing
         float            m_angle;
         float            m_lastFireTime;
     };
-    typedef boost::shared_ptr<MissileEnemy> MissileEnemyPtr;
+    typedef std::shared_ptr<MissileEnemy> MissileEnemyPtr;
     typedef std::vector<MissileEnemyPtr> MissileEnemyVec;
 
 
@@ -412,7 +413,7 @@ namespace typing
         juzutil::Vector3 m_angles;
         juzutil::Vector3 m_angleSpeed;
     };
-    typedef boost::shared_ptr<BombEnemy> BombEnemyPtr;
+    typedef std::shared_ptr<BombEnemy> BombEnemyPtr;
     typedef std::vector<BombEnemyPtr> BombEnemyVec;
 
 
@@ -504,7 +505,7 @@ namespace typing
         bool             m_seeking;
         bool             m_turning;
     };
-    typedef boost::shared_ptr<SeekerEnemy> SeekerEnemyPtr;
+    typedef std::shared_ptr<SeekerEnemy> SeekerEnemyPtr;
     typedef std::vector<SeekerEnemyPtr> SeekerEnemyVec;
 }
 

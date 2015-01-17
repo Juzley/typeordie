@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/utility.hpp>
 
 namespace typing
@@ -15,7 +15,7 @@ namespace typing
         unsigned int streak;
         std::string  name;
     };
-    typedef boost::shared_ptr<HighScore> HighScorePtr;
+    typedef std::shared_ptr<HighScore> HighScorePtr;
 
     class HighScores : boost::noncopyable
     {

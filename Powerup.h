@@ -4,7 +4,7 @@
 #include <ctime>
 #include <stdexcept>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/random.hpp>
 #include <math.h>
 #include "Entity.h"
@@ -63,7 +63,7 @@ namespace typing
         }
 
     };
-    typedef boost::shared_ptr<Powerup> PowerupPtr;
+    typedef std::shared_ptr<Powerup> PowerupPtr;
     typedef PowerupPtr (*PowerupCreator)(const std::string& phrase, const juzutil::Vector3& origin);
 
     template<typename powerupType>

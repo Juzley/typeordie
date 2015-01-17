@@ -2,7 +2,7 @@
 #define _MENU_ITEM_H_
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "Vector.h"
 
 namespace typing
@@ -49,7 +49,7 @@ namespace typing
         float            m_height;
         bool             m_selected;
    };
-   typedef boost::shared_ptr<MenuItem> MenuItemPtr;
+   typedef std::shared_ptr<MenuItem> MenuItemPtr;
 }
 
 #endif // _MENU_ITEM_H_
