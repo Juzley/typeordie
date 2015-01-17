@@ -235,11 +235,10 @@ namespace typing
     {
         m_origin += m_dir * (MISSILEENEMY_SPEED * GAME.GetFrameTime());
 
-        if (m_dir[0] > 0 && m_origin[0] > Game::GAME_SCREEN_RIGHT ||
-            m_dir[0] < 0 && m_origin[0] < Game::GAME_SCREEN_LEFT ||
-            m_dir[1] > 0 && m_origin[1] > Game::GAME_SCREEN_TOP ||
-            m_dir[1] < 0 && m_origin[1] < Game::GAME_SCREEN_BOTTOM)
-        {
+        if ((m_dir[0] > 0 && m_origin[0] > Game::GAME_SCREEN_RIGHT) ||
+            (m_dir[0] < 0 && m_origin[0] < Game::GAME_SCREEN_LEFT) ||
+            (m_dir[1] > 0 && m_origin[1] > Game::GAME_SCREEN_TOP) ||
+            (m_dir[1] < 0 && m_origin[1] < Game::GAME_SCREEN_BOTTOM)) {
             GAME.MakeCharAvail(m_phrase.GetStartChar());
             m_unlink = true;
         }

@@ -32,7 +32,7 @@ namespace typing
     Explosion::Explosion(const juzutil::Vector3& origin, const ColourRGBA& colour)
         : m_origin(origin), m_colour(colour), m_age(0.0f), m_fadeSpeed(colour.GetAlpha() / LIFETIME)
     {
-        for(int i = 0; i < FRAGMENTS; ++i)
+        for(unsigned int i = 0; i < FRAGMENTS; ++i)
         {
             m_fragments[i].m_origin = origin;
             m_fragments[i].m_dir[0] = RAND.Range(-0.5f, 0.5f);
@@ -60,7 +60,7 @@ namespace typing
     {
         m_age += GAME.GetFrameTime();
 
-        for(int i = 0; i < FRAGMENTS; ++i)
+        for(unsigned int i = 0; i < FRAGMENTS; ++i)
         {
             m_fragments[i].m_origin += m_fragments[i].m_dir * m_fragments[i].m_speed * GAME.GetFrameTime();
             m_fragments[i].m_speed  += m_fragments[i].m_accel * GAME.GetFrameTime();
@@ -71,7 +71,7 @@ namespace typing
 
     void Explosion::Draw()
     {
-        for(int i = 0; i < FRAGMENTS; ++i)
+        for(unsigned int i = 0; i < FRAGMENTS; ++i)
         {
             glPushMatrix();
                 glTranslatef(m_fragments[i].m_origin[0], m_fragments[i].m_origin[1], m_fragments[i].m_origin[2]);

@@ -17,7 +17,7 @@ namespace typing
         void Draw();
         void Update();
         void Fire();
-        void Damage(unsigned int damage = 0);
+        void Damage();
 
         const juzutil::Vector3& GetOrigin() const
         {

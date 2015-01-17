@@ -27,6 +27,26 @@
 
 namespace typing
 {
+    // The length of time, in seconds, between levels.
+    static const float LEVEL_TIME = 30.0f;
+
+    // The length of time, in seconds, between waves.
+    static const float WAVE_INTERVAL_BASE = 10.0f;
+
+    // The amount of that the wave interval decreases by each level.
+    static const float WAVE_INTERVAL_SCALE = 1.0f;
+
+    // The minimum interval between waves.
+    static const float WAVE_INTERVAL_MIN = 4.0f;
+
+    // The length of time to pause before starting a wave at the start of a
+    // game.
+    static const float GAME_START_WAVE_PAUSE = 1.0f;
+
+    // The length of time to wait for the next wave if the player kills all
+    // active waves.
+    static const float WAVES_CLEARED_PAUSE = 0.5f; 
+
     const float       Game::GAME_SCREEN_TOP = 1000.0f;
     const float       Game::GAME_SCREEN_BOTTOM = -100.0f;
     const float       Game::GAME_SCREEN_LEFT = -775.0f;
@@ -64,8 +84,7 @@ namespace typing
 
         // Load the music
         m_music = Mix_LoadMUS(GAME_MUSIC.c_str());
-        if(!m_music)
-        {
+        if (!m_music) {
             throw FileNotFoundException(GAME_MUSIC);
         }
 
@@ -79,17 +98,17 @@ namespace typing
         Explosion::Init();
         Laser::Init();
 
-        // Initialise waves
-        m_waves.push_back(EnemyWavePtr(new BasicEnemyWave));
-        m_waves.push_back(EnemyWavePtr(new MissileEnemyWave));
-        m_waves.push_back(EnemyWavePtr(new AccelEnemyWave));
-        m_waves.push_back(EnemyWavePtr(new BombEnemyWave));
-        m_waves.push_back(EnemyWavePtr(new SeekerEnemyWave));
-        std::sort(m_waves.begin(), m_waves.end(), EnemyWaveSort());
+        // Initialise the wave creator, setting the minimum level that each
+        // wave can be used at.
+        m_waveCreator.AddWave<BasicEnemyWave>(0);
+        m_waveCreator.AddWave<MissileEnemyWave>(0);
+        m_waveCreator.AddWave<AccelEnemyWave>(1);
+        m_waveCreator.AddWave<BombEnemyWave>(2);
+        m_waveCreator.AddWave<SeekerEnemyWave>(3);
 
+        // TODO: Sort this
         m_bossWaves.push_back(EnemyWavePtr(new MissileBossEnemyWave));
         m_bossWaves.push_back(EnemyWavePtr(new ChargeBossEnemyWave));
-        std::sort(m_bossWaves.begin(), m_bossWaves.end(), EnemyWaveSort());
 
         // Initialise powerups
         m_powerups.Register(CreatePowerup<ExtraLife>);
@@ -113,17 +132,13 @@ namespace typing
         m_player.Reset();
         m_timer.Reset();
 
-        m_gameEndTime       = 0.0f;
-        m_score             = 0;
-        m_streakValid       = false;
-        m_streak            = 0;
-        m_invincible        = false;
-
-        for (int i = 0; i < FLOW_CONTRIB_COUNT; i++) {
-            m_flowContribs[i] = 0;
-        }
-        m_flow                   = 0;
-        m_oldestFlowContribIndex = 0;
+        m_level         = 0; 
+        m_nextLevelTime = LEVEL_TIME;
+        m_gameEndTime   = 0.0f;
+        m_score         = 0;
+        m_streakValid   = false;
+        m_streak        = 0;
+        m_invincible    = false;
 
         m_hits        = 0;
         m_misses      = 0;
@@ -137,16 +152,15 @@ namespace typing
         
         RAND.Seed(static_cast<unsigned int>(std::time(0)));
 
-        m_currentWave.reset();
         m_targetEnt.reset();
 
-        m_progress           = 0;
-        m_lastValidWaveIndex = 0;
+        m_nextWaveTime      = GAME_START_WAVE_PAUSE;
         m_bossWavePending   = false;
         m_bossWaveStartTime = 0.0f;
         m_nextBossWaveIndex = 0;
 
-        m_nextPowerupTime = RAND.Range(MIN_POWERUP_SPAWN_TIME, MAX_POWERUP_SPAWN_TIME);
+        m_nextPowerupTime = RAND.Range(MIN_POWERUP_SPAWN_TIME,
+                                       MAX_POWERUP_SPAWN_TIME);
 
         Mix_FadeInMusic(m_music, -1, MUSIC_FADE_IN_TIME);
     }
@@ -154,61 +168,36 @@ namespace typing
 
     void Game::SpawnEnemies()
     {
-        EnemyWavePtr wave = m_currentWave.lock();
+        // TODO: Handle bosses
 
-        if (wave) {
-            // If we're waiting to spawn a boss wave, check whether we've
-            // waited long enough to spawn it.
-            if (m_bossWavePending) {
-                if (m_bossWaveStartTime <= GetTime()) {
-                    m_bossWavePending = false;
-                    wave->Start();
-                }
+        // Work out whether we have waited long enough to start a new wave.
+        if (GetTime() >= m_nextWaveTime) {
+            EnemyWavePtr wave = m_waveCreator.CreateWave(m_level);
+            wave->Start();
+            m_activeWaves.push_back(wave);
+
+            m_nextWaveTime =
+                GetTime() + std::max(WAVE_INTERVAL_MIN,
+                                     WAVE_INTERVAL_BASE -
+                                                WAVE_INTERVAL_SCALE * m_level);
+        } 
+
+        // Spawn enemies from any active waves, remove any finished waves.
+        for (WaveVec::iterator iter = m_activeWaves.begin();
+             iter != m_activeWaves.end();) {
+            (*iter)->Spawn();
+            
+            if ((*iter)->IsFinished()) {
+                iter = m_activeWaves.erase(iter);
             } else {
-                wave->Spawn();
-
-                if (wave->IsFinished())
-                {
-                    m_currentWave.reset();
-                    wave.reset();
-
-                    m_progress += m_flow;
-                }
+                ++iter;
             }
         }
 
-        // There is no active wave, find a new one
-        // First check if we should spawn a boss wave.
-        if (!wave && !m_bossWaves.empty()) {
-            if (m_nextBossWaveIndex < m_bossWaves.size()) {
-                const float nextBossProgress = m_bossWaves[m_nextBossWaveIndex]->MinProgress();
-                if (m_lastBossCheckedProgress <= nextBossProgress && GetProgress() >= nextBossProgress) {
-                    m_currentWave = m_bossWaves[m_nextBossWaveIndex++];
-                    wave = m_currentWave.lock();
-
-                    m_bossWavePending = true;
-                    m_bossWaveStartTime = GetTime() + BOSS_WAVE_WAIT_TIME;
-                }
-            }
-
-            m_lastBossCheckedProgress = GetProgress();
-        }
-
-        // We didn't spawn a boss wave, spawn a normal wave of enemies.
-        if (!wave && !m_waves.empty()) {
-            // Find the range of waves that are valid for the current game progress
-            // The wave collection is sorted by increasing progress, so we can start
-            // the search at the last known valid wave.
-            while (m_lastValidWaveIndex < m_waves.size() &&
-                   GetProgress() >= m_waves[m_lastValidWaveIndex]->MinProgress())
-            {
-                ++m_lastValidWaveIndex;
-            }
-
-            // Pick a random wave from the currently valid wave types to spawn.
-            const unsigned int index = RAND.Range(static_cast<unsigned int>(0), static_cast<unsigned int>(m_lastValidWaveIndex - 1));
-            m_currentWave = m_waves[index];
-            m_waves[index]->Start();
+        // If there are no active waves, bring the next wave time forward.
+        if (m_activeWaves.size() == 0 &&
+            GAME.GetTime() - m_nextWaveTime > WAVES_CLEARED_PAUSE) {
+            m_nextWaveTime = GAME.GetTime() + m_nextWaveTime;
         }
     }
 
@@ -241,7 +230,7 @@ namespace typing
             return;
         }
 
-        // A wave is active, update the entities
+        // The game is active, update the entities.
         for (EntityList::iterator iter = m_entities.begin(); iter != m_entities.end(); ++iter)
         {
             (*iter)->Update();
@@ -287,6 +276,11 @@ namespace typing
             }
         }
 
+        if (GetTime() > m_nextLevelTime) {
+            m_level++;
+            m_nextLevelTime = GetTime() + LEVEL_TIME;
+        }
+
         SpawnEnemies();
         SpawnPowerups();
 
@@ -315,12 +309,16 @@ namespace typing
 #ifdef _DEBUG
         const float debug_height = 16.0f;
         float debug_y = 0; 
-        FONTS.Print(HUD_FONT, 0.0f, debug_y, debug_height, ColourRGBA::White(), Font::ALIGN_LEFT,
-            (boost::format("F:%1%, P:%2%") % m_flow % static_cast<int>(GetProgress() * 100)).str());
-        debug_y += debug_height;
         m_phrases.DrawChars(HUD_FONT, debug_y, debug_height);
         debug_y += debug_height;
-        FONTS.Print(HUD_FONT, 0.0f, debug_y, debug_height, ColourRGBA::White(), Font::ALIGN_LEFT,
+        FONTS.Print(
+            HUD_FONT, 0.0f, debug_y, debug_height,
+            ColourRGBA::White(), Font::ALIGN_LEFT,
+            (boost::format("Level: %1%") % m_level).str());
+        debug_y += debug_height;
+        FONTS.Print(
+            HUD_FONT, 0.0f, debug_y, debug_height,
+            ColourRGBA::White(), Font::ALIGN_LEFT,
             (boost::format("Pup: %1%") % (m_nextPowerupTime - GetTime())).str());
 #endif
 
@@ -668,11 +666,6 @@ namespace typing
         const float  POOR_MULTIPLIER      = 0.5f;
         const float  BAD_MULTIPLIER       = 0.25f;
         const float  AWARD_OFFSET         = -20.0f;
-        unsigned int EXCELLENT_FLOW       = 10;
-        unsigned int GOOD_FLOW            = 8;
-        unsigned int OK_FLOW              = 5;
-        unsigned int POOR_FLOW            = 2;
-        unsigned int BAD_FLOW             = 1;
 
         unsigned int score = ent->GetScore();
 
@@ -685,34 +678,28 @@ namespace typing
         AddEffect(laser);
         m_player.Fire();
 
-        // Don't give an award or increase the flow if this was only a single-char entity.
+        // Don't give an award if this was only a single-char entity.
         if (!ent->IsPhraseSingle()) {
             AwardType type;
-            unsigned int flow;
             float speed = ent->GetTypingSpeed();
 
             if (speed <= EXCELLENT_SPEED) {
                 type = AWARD_EXCELLENT;
-                flow = EXCELLENT_FLOW;
                 score = static_cast<unsigned int>(static_cast<float>(score) * EXCELLENT_MULTIPLIER);
                 m_excellents++;
             } else if (speed <= GOOD_SPEED) {
                 type = AWARD_GOOD;
-                flow = GOOD_FLOW;
                 score = static_cast<unsigned int>(static_cast<float>(score) * GOOD_MULTIPLIER);
                 m_goods++;
             } else if (speed <= OK_SPEED) {
                 type = AWARD_OK;
-                flow = OK_FLOW;
                 m_oks++;
             } else if (speed <= POOR_SPEED) {
                 type = AWARD_POOR;
-                flow = POOR_FLOW;
                 score = static_cast<unsigned int>(static_cast<float>(score) * POOR_MULTIPLIER);
                 m_poors++;
             } else {
                 type = AWARD_BAD;
-                flow = BAD_FLOW;
                 score = static_cast<unsigned int>(static_cast<float>(score) * BAD_MULTIPLIER);
                 m_bads++;
             }
@@ -724,18 +711,6 @@ namespace typing
                 AwardPtr award(new Award(screenOrg, type, GetTime()));
                 AddEffect2d(award);
             }
-
-            // Calculate the new flow value
-            m_flow -= m_flowContribs[m_oldestFlowContribIndex];
-            m_flowContribs[m_oldestFlowContribIndex] = flow;
-
-            if (m_oldestFlowContribIndex == 0) {
-                m_oldestFlowContribIndex = FLOW_CONTRIB_COUNT - 1;
-            } else {
-                m_oldestFlowContribIndex--;
-            }
-
-            m_flow += flow;
         }
 
         score   *= (m_streak == 0 ? 1 : m_streak);
@@ -747,8 +722,7 @@ namespace typing
     {
         bool miss = false;
 
-        if (!IsActive())
-        {
+        if (!IsActive()) {
             return;
         }
 
@@ -759,55 +733,45 @@ namespace typing
             c = sym.unicode & 0x7F;
         }
 
-        if (HasGameEnded())
-        {
-            // If we are dead, and we have paused for long enough, go back to the main menu
-            // on any keypress.
-            if (GetTime() - END_GAME_SCREEN_PAUSE > m_gameEndTime)
-            {
+        if (HasGameEnded()) {
+            // If we are dead, and we have paused for long enough,
+            // go back to the main menu on any keypress.
+            if (GetTime() - END_GAME_SCREEN_PAUSE > m_gameEndTime) {
                 Activate(false);
 
-                if (SCORES.IsHighScore(m_score))
-                {
+                if (SCORES.IsHighScore(m_score)) {
                     MENU.Activate(NewHighScoreMenu::MENU_NAME);
-                }
-                else
-                {
+                } else {
                     MENU.Activate(MainMenu::MENU_NAME);
                 }
             }
-        }
-        else if (!IsPaused() && sym.sym == SDLK_ESCAPE)
-        {
+        } else if (!IsPaused() && sym.sym == SDLK_ESCAPE) {
             // Escape pressed, pause and bring up the in-game menu
             Pause(true);
             MENU.Activate(PauseMenu::MENU_NAME);
-        }
-        else if (IsAlive() && !HasGameEnded() && !IsPaused() && sym.sym != SDLK_RETURN && c != 0)
-        {
+        } else if (IsAlive() && !HasGameEnded() && !IsPaused() &&
+                   sym.sym != SDLK_RETURN && c != 0) {
             EntityPtr ent = m_targetEnt.lock();
-            if (!ent)
-            {
-                // There is no target entity, look for a entity starting with the letter
-                // the player has typed.
+            if (!ent) {
+                // There is no target entity, look for a entity starting
+                // with the letter the player has typed.
                 EntityList::iterator target =
                     find_if(m_entities.begin(), m_entities.end(),
                             boost::bind(&Entity::StartsWith, _1, c));
 
-                if (target == m_entities.end())
-                {
-                    // We didn't find any targets starting with the letter the player typed,
-                    // this is a miss.
+                if (target == m_entities.end()) {
+                    // We didn't find any targets starting with the letter the
+                    // player typed, this is a miss.
                     miss = true;
                 } else {
                     // We've got a new target.
                     m_targetEnt  = *target;
                     ent          = m_targetEnt.lock();
 
-                    // Don't want to play the target sound if this entity's phrase is a
-                    // single letter, as we are killing it immediately.
-                    if (!ent->IsPhraseSingle())
-                    {
+                    // Don't want to play the target sound if this entity's
+                    // phrase is a single letter, as we are killing it
+                    // immediately.
+                    if (!ent->IsPhraseSingle()) {
                         SOUNDS.Play(TARGET_SOUND);
                     }
 
@@ -815,34 +779,30 @@ namespace typing
                 }
             }
 
-            if (ent)
-            {
+            if (ent) {
                 bool finished;
                 bool hit;
                 ent->OnType(c, &hit, &finished);
                 miss = !hit;
 
-                if (finished)
-                {
-                    // We can miss and still finish the enemy (for example a BombEnemy dies on a miss),
-                    // so only display awards etc. if we hit.
+                if (finished) {
+                    // We can miss and still finish the enemy (for example a
+                    // BombEnemy dies on a miss), so only display awards etc.
+                    // if we hit.
                     if (hit) {
-					    PhraseFinished(ent);
+                        PhraseFinished(ent);
                     }
 
                     m_targetEnt.reset();
                 }
             }
 
-            if (miss)
-            {
+            if (miss) {
                 m_misses++;
                 m_streakValid = false;
                 m_streak      = 0;
                 SOUNDS.Play(MISS_SOUND);
-            }
-            else
-            {
+            } else {
                 m_hits++;
             }
         }
@@ -852,14 +812,13 @@ namespace typing
     {
         m_player.Damage();
 
-        if (!m_invincible && m_lives > 0)
-        {
+        if (!m_invincible && m_lives > 0) {
             m_lives--;
             m_usedLives++;
 
-            if (m_lives == 0)
-            {
-                ExplosionPtr explosion(new Explosion(GetPlayerOrigin(), ColourRGBA::Red()));
+            if (m_lives == 0) {
+                ExplosionPtr explosion(new Explosion(GetPlayerOrigin(),
+                                                     ColourRGBA::Red()));
                 AddEffect(explosion);
 
                 EndGame(FINAL_DEATH_PAUSE);

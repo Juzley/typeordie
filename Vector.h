@@ -226,9 +226,9 @@ namespace juzutil
             {
                 m_y = minValY;
             }
-            if(m_y > maxValX)
+            if(m_y > maxValY)
             {
-                m_y = maxValX;
+                m_y = maxValY;
             }
             if(m_z < minValZ)
             {
@@ -420,9 +420,9 @@ namespace juzutil
             {
                 m_y = minValY;
             }
-            if(m_y > maxValX)
+            if(m_y > maxValY)
             {
-                m_y = maxValX;
+                m_y = maxValY;
             }
             if(m_z < minValZ)
             {

@@ -1,17 +1,17 @@
 #ifndef _ENEMY_WAVE_H_
 #define _ENEMY_WAVE_H_
 
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
+#include <tuple>
+#include <memory>
 #include "Enemy.h"
+#include "Random.h"
 
 namespace typing
 {
     class EnemyWave
     {
     public:        
-        virtual bool  IsFinished() const = 0;
-        virtual float MinProgress() const = 0;
+        virtual bool         IsFinished() const = 0;
 
         virtual void Start()
         {
@@ -20,21 +20,47 @@ namespace typing
         virtual void Spawn()
         {
         }
-
-        virtual void OnFinished()
-        {
-        }
     };
-    typedef boost::shared_ptr<EnemyWave> EnemyWavePtr;
-    typedef boost::weak_ptr<EnemyWave>   EnemyWaveWeakPtr;
+    typedef std::shared_ptr<EnemyWave> EnemyWavePtr;
+    typedef std::weak_ptr<EnemyWave>   EnemyWaveWeakPtr;
 
-    class EnemyWaveSort
+    class RandomEnemyWaveFactory
     {
-    public:
-        bool operator()(const EnemyWavePtr& a, const EnemyWavePtr& b) const
-        {
-            return (a->MinProgress() < b->MinProgress());
-        }
+        public:
+            template <typename T> void AddWave(unsigned int minLevel)
+            {
+                m_waves.push_back(std::make_tuple(minLevel,
+                                                  &CreateEnemyWave<T>));
+            }
+
+            EnemyWavePtr CreateWave(unsigned int level)
+            {
+                // Find the list of waves that are valid for the current level.
+                WaveCreateVec validWaves(m_waves.size());
+                auto iter = std::copy_if(
+                    m_waves.begin(), m_waves.end(), validWaves.begin(),
+                    [=](WaveMapping m) -> bool { return std::get<0>(m) <= level; });
+                validWaves.resize(std::distance(validWaves.begin(), iter));
+
+                // Pick a random wave from the valid waves.
+                auto createTup =
+                    validWaves[RAND.Range(
+                        static_cast<unsigned int>(0),
+                        static_cast<unsigned int>(validWaves.size() - 1))];
+                WaveCreateFn createFn = std::get<1>(createTup);
+                return createFn();
+            }
+        private:
+            typedef EnemyWavePtr (*WaveCreateFn)();
+            typedef std::tuple<unsigned int, WaveCreateFn> WaveMapping;
+            typedef std::vector<WaveMapping> WaveCreateVec;
+
+            WaveCreateVec m_waves;
+
+            template <typename T> static EnemyWavePtr CreateEnemyWave()
+            {
+                return EnemyWavePtr(new T);
+            }
     };
 
 
@@ -47,22 +73,12 @@ namespace typing
         void Start();
         void Spawn();
         bool IsFinished() const;
-        void OnFinished();
-
-        float MinProgress() const
-        {
-            return 0.0f;
-        }
 
     private:
-        static const unsigned int BASICENEMYWAVE_MIN_ENEMIES = 5;
-        static const unsigned int BASICENEMYWAVE_MAX_ENEMIES = 10;
-
         BasicEnemyVec m_enemies;
         unsigned int  m_enemyCount;
-        unsigned int  m_enemiesSpawned;
+        float         m_enemySpeed;
         float         m_nextSpawnTime;
-        float         m_waveEndTime;
     };
 
 
@@ -75,22 +91,12 @@ namespace typing
         void Start();
         void Spawn();
         bool IsFinished() const;
-        void OnFinished();
-
-        float MinProgress() const
-        {
-            return 0.1f;
-        }
 
     private:
-        static const unsigned int ACCELENEMYWAVE_MIN_ENEMIES = 5;
-        static const unsigned int ACCELENEMYWAVE_MAX_ENEMIES = 10;
-
         AccelEnemyVec m_enemies;
         unsigned int  m_enemyCount;
-        unsigned int  m_enemiesSpawned;
+        float         m_enemySpeed;
         float         m_nextSpawnTime;
-        float         m_waveEndTime;
     };
 
 
@@ -103,20 +109,10 @@ namespace typing
         void Start();
         void Spawn();
         bool IsFinished() const;
-        void OnFinished();
-
-        float MinProgress() const
-        {
-            return (0.01f);
-        }
 
     private:
-        static const unsigned int MISSILEENEMYWAVE_MIN_ENEMIES = 6;
-        static const unsigned int MISSILEENEMYWAVE_MAX_ENEMIES = 10;
-
         MissileEnemyVec m_enemies;
         unsigned int    m_enemyCount;
-        unsigned int    m_enemiesSpawned;
         float           m_nextSpawnTime;
     };
 
@@ -134,23 +130,11 @@ namespace typing
         void Start();
         void Spawn();
         bool IsFinished() const;
-        void OnFinished();
-
-        float MinProgress() const
-        {
-            return (0.75f);
-        }
 
     private:
-        static const unsigned int MIN_ENEMIES = 2;
-        static const unsigned int MAX_ENEMIES = 4;
-        static const float        WAVE_TIME;
-        static const BBox         OUTER_BOUNDS;
-        static const BBox         INNER_BOUNDS;
-
         BombEnemyVec m_enemies;
-        bool         m_spawned;
-        float        m_spawnTime;
+        unsigned int m_enemyCount;
+        float        m_nextSpawnTime;
     };
 
 
@@ -163,12 +147,6 @@ namespace typing
         void Start();
         void Spawn();
         bool IsFinished() const;
-        void OnFinished();
-
-        float MinProgress() const
-        {
-            return (0.50f);
-        }
 
     private:
         static const unsigned int SEEKERENEMYWAVE_MIN_ENEMIES = 6;
@@ -179,7 +157,6 @@ namespace typing
 
         SeekerEnemyVec  m_enemies;
         unsigned int    m_enemyCount;
-        unsigned int    m_enemiesSpawned;
         float           m_nextSpawnTime;
     };
 }

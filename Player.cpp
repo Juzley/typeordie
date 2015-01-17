@@ -46,7 +46,7 @@ namespace typing
             glTranslatef(PLAYER_ORIGIN.GetX(), PLAYER_ORIGIN.GetY(), PLAYER_ORIGIN.GetZ());
             glRotatef(45.0f, 0.0f, 0.0f, 1.0f);
             glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
-            glScalef(40.0f, 40.0f, 40.0f);
+            glScalef(38.0f, 38.0f, 38.0f);
 
             DrawCube(ColourRGBA(red, green, 0.0f, alpha), ColourRGBA(0.8f, 1.0f, 0.8f, 1.0f));
 
@@ -76,7 +76,7 @@ namespace typing
         m_lastFireTime = GAME.GetTime();
     }
 
-    void Player::Damage(unsigned int damage)
+    void Player::Damage()
     {
         m_damageTime = GAME.GetTime();
     }

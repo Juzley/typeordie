@@ -112,7 +112,7 @@ namespace typing
         MenuScreen::Draw();
     }
 
-    MenuScreen::NextAction HighScoresMenu::OnMenuItemChoose(unsigned int id)
+    MenuScreen::NextAction HighScoresMenu::OnMenuItemChoose(unsigned int)
     {
         return ACTION_PREV;
     }

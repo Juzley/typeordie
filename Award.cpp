@@ -51,7 +51,6 @@ namespace typing
 
     void Award::Draw()
     {
-        float              prop  = (GAME.GetTime() - m_startTime) / AWARD_DISPLAY_TIME;
         float              y     = m_origin.GetY() - AWARD_FONT_HEIGHT / 2.0f;
         const ColourRGB   *col;
         const std::string *str;

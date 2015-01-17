@@ -82,10 +82,10 @@ namespace typing
 
         Phrase           m_phrase;
         juzutil::Vector3 m_origin;
+		float            m_speed;
         bool             m_unlink;
         juzutil::Vector3 m_dir;
         float            m_angle;
-		float            m_speed;
     };
     typedef boost::shared_ptr<BasicEnemy> BasicEnemyPtr;
     typedef std::vector<BasicEnemyPtr> BasicEnemyVec;
@@ -164,10 +164,10 @@ namespace typing
 
         Phrase           m_phrase;
         juzutil::Vector3 m_origin;
+		float            m_speed;
         bool             m_unlink;
         juzutil::Vector3 m_dir;
         float            m_angle;
-		float            m_speed;
     };
     typedef boost::shared_ptr<AccelEnemy> AccelEnemyPtr;
     typedef std::vector<AccelEnemyPtr> AccelEnemyVec;

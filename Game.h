@@ -25,11 +25,11 @@ namespace typing
     class Game
     {
     public:
-		// Consts/Enums
-		static const float GAME_SCREEN_TOP;
-		static const float GAME_SCREEN_BOTTOM;
-		static const float GAME_SCREEN_LEFT;
-		static const float GAME_SCREEN_RIGHT;
+        // Consts/Enums
+        static const float GAME_SCREEN_TOP;
+        static const float GAME_SCREEN_BOTTOM;
+        static const float GAME_SCREEN_LEFT;
+        static const float GAME_SCREEN_RIGHT;
 
         // Methods
         void Init();
@@ -94,10 +94,9 @@ namespace typing
             return m_timer.GetFrameTime();
         }
 
-        // Returns a float between 0 and 1 representing progress through the game
-        float GetProgress() const
+        unsigned int GetLevel() const
         {
-            return (static_cast<float>(m_progress) / static_cast<float>(MAX_PROGRESS));
+            return m_level;
         }
 
         const std::string& GetPhrase(PhraseBook::PhraseLength len)
@@ -138,9 +137,6 @@ namespace typing
         static const unsigned int GAME_START_LIVES        = 3;
         static const unsigned int END_GAME_SCREEN_PAUSE   = 1;
         static const unsigned int MAX_PROGRESS            = 5000;
-        static const float        WAVE_END_PAUSE;
-        static const float        WAVE_START_SCREEN_PAUSE;
-        static const float        WAVE_START_SCREEN_FADE;
         static const float        FINAL_DEATH_PAUSE;
         static const float        MIN_POWERUP_SPAWN_TIME;
         static const float        MAX_POWERUP_SPAWN_TIME;
@@ -202,31 +198,20 @@ namespace typing
         Mix_Music                   *m_music;
         PowerupFactory               m_powerups;
         float                        m_nextPowerupTime;
+        unsigned int                 m_level;
+        float                        m_nextLevelTime;
 
         // Enemy spawn variables
-        // TODO: reconsider how all this wave stuff works
-        WaveVec                      m_waves;
-        WaveVec::size_type           m_lastValidWaveIndex;
-        EnemyWaveWeakPtr             m_currentWave;
+        RandomEnemyWaveFactory       m_waveCreator;
+        WaveVec                      m_activeWaves;
+        float                        m_nextWaveTime;
+
         WaveVec                      m_bossWaves;
         WaveVec::size_type           m_nextBossWaveIndex;
         float                        m_lastBossCheckedProgress;
         bool                         m_bossWavePending;
         float                        m_bossWaveStartTime;
         static const float           BOSS_WAVE_WAIT_TIME;
-
-        /*
-            Progress and flow:
-            Progress dictates how far through the game the player is, ie. how difficult the game is. It is increased
-            after every wave.
-            Flow is a measure of how quickly the player has killed recent enemies, which is used to
-            decide how quickly to increase the progress.
-        */
-        static const unsigned int             FLOW_CONTRIB_COUNT = 10;
-        unsigned int                          m_progress;
-        unsigned int                          m_flow;
-        boost::array<int, FLOW_CONTRIB_COUNT> m_flowContribs;
-        unsigned int                          m_oldestFlowContribIndex;
 
         // Stats
         unsigned int                 m_hits;

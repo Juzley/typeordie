@@ -1,4 +1,4 @@
-CCFLAGS on typeordie = -Werror -Wall -Wextra ;
+OPTIM = -std=c++11 -Werror -Wall -Wextra -g -O0 -D_DEBUG ;
 LINKLIBS on typeordie = -lm -lSDL -lSDL_mixer -lGL -lGLU -lstdc++ ;
 Main typeordie :
     App.cpp

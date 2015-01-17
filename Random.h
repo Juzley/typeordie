@@ -1,6 +1,9 @@
 #include <memory>
 #include <boost/random.hpp>
 
+#ifndef __RANDOM_H__
+#define __RANDOM_H__
+
 namespace typing
 {
     class Random
@@ -55,3 +58,5 @@ namespace typing
 
     #define RAND Random::GetRandom()
 }
+
+#endif /* __RANDOM_H__ */

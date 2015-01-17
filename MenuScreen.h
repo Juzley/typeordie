@@ -39,7 +39,7 @@ namespace typing
             return ACTION_NONE;
         }
 
-        virtual NextAction OnMenuItemChoose(unsigned int id)
+        virtual NextAction OnMenuItemChoose(unsigned int)
         {
             return ACTION_NONE;
         }

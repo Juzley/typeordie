@@ -144,8 +144,8 @@ namespace typing
         void Draw3D();    
 
     private:
-        juzutil::Vector3 m_origin;
         Phrase           m_phrase;
+        juzutil::Vector3 m_origin;
         bool             m_unlink;
         float            m_spawnTime;
     };

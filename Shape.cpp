@@ -220,7 +220,7 @@ namespace typing
         glDisable(GL_TEXTURE_2D);
         glColor4f(colour.GetRed(), colour.GetGreen(), colour.GetBlue(), colour.GetAlpha());
 
-        for (int i = 0; i < SPHERE_LATS; i++) {
+        for (unsigned int i = 0; i < SPHERE_LATS; i++) {
             const float lat0 = static_cast<float>(M_PI) * (-0.5f + static_cast<float>(i - 1) / static_cast<float>(SPHERE_LATS));
             const float z0 = sinf(lat0);
             const float zr0 = cosf(lat0);
@@ -230,7 +230,7 @@ namespace typing
             const float zr1 = cosf(lat1);
 
             glBegin(GL_QUAD_STRIP);
-            for(int j = 0; j <= SPHERE_LONGS; j++) {
+            for(unsigned int j = 0; j <= SPHERE_LONGS; j++) {
                 const float lng = 2.0f * static_cast<float>(M_PI) * static_cast<float>(j - 1) / static_cast<float>(SPHERE_LONGS);
                 const float x = cosf(lng);
                 const float y = sinf(lng);

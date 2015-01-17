@@ -86,7 +86,7 @@ namespace juzutil
     //
     //////////////////////////////////////////////////////////////////////////
 
-    bool Matrix4::Inverse(Matrix4& mat) const
+    bool Matrix4::Inverse(Matrix4&) const
     {
         // TODO: meh
         return false;

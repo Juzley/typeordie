@@ -516,6 +516,7 @@ namespace juzutil
         float Determinant() const
         {
             // TODO meh
+            return 0.0f;
         }
 
         bool Inverse(Matrix4& mat) const;
