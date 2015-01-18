@@ -2,6 +2,7 @@
 #define _APP_H_
 
 #include <memory>
+#include <cstdio>
 #include <SDL/SDL.h>
 
 namespace typing
@@ -15,8 +16,10 @@ namespace typing
         // Consts/Enums
         static const unsigned int MAJOR_VERSION;
         static const unsigned int MINOR_VERSION;
-        static const float       SCREEN_WIDTH;
-        static const float       SCREEN_HEIGHT;
+        static const float        SCREEN_WIDTH;
+        static const float        SCREEN_HEIGHT;
+
+        enum LogLevel { LOG_ERROR, LOG_DEBUG };
 
         // Methods
         void Init();
@@ -42,6 +45,22 @@ namespace typing
         void Quit()
         {
             m_done = true;
+        }
+
+        void Log (LogLevel           level,
+                  const std::string &str)
+        {
+            switch (level) {
+            case LOG_DEBUG:
+#ifdef _DEBUG
+                fprintf(stdout, "%s\n", str.c_str());
+#endif 
+                break;
+
+            case LOG_ERROR:
+                fprintf(stderr, "%s\n", str.c_str());
+                break;
+            }
         }
 
     private:

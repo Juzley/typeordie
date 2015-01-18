@@ -205,12 +205,12 @@ namespace typing
         WaveVec                      m_activeWaves;
         float                        m_nextWaveTime;
 
+        CyclicEnemyWaveFactory       m_bossWaveCreator;
         WaveVec                      m_bossWaves;
         WaveVec::size_type           m_nextBossWaveIndex;
-        float                        m_lastBossCheckedProgress;
         bool                         m_bossWavePending;
         float                        m_bossWaveStartTime;
-        static const float           BOSS_WAVE_WAIT_TIME;
+        bool                         m_bossWaveActive;
 
         // Stats
         unsigned int                 m_hits;

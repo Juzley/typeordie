@@ -47,12 +47,15 @@ namespace typing
     // active waves.
     static const float WAVES_CLEARED_PAUSE = 0.5f; 
 
+    // The length of time to pause on reaching the end of the level before
+    // the boss appears.
+    static const float BOSS_WAVE_WAIT_TIME = 3.0f;
+
     const float       Game::GAME_SCREEN_TOP = 1000.0f;
     const float       Game::GAME_SCREEN_BOTTOM = -100.0f;
     const float       Game::GAME_SCREEN_LEFT = -775.0f;
     const float       Game::GAME_SCREEN_RIGHT = 775.0f;
     const float       Game::FINAL_DEATH_PAUSE = 2.0f;
-    const float       Game::BOSS_WAVE_WAIT_TIME = 5.0f;
     const float       Game::MIN_POWERUP_SPAWN_TIME = 30.0f;
     const float       Game::MAX_POWERUP_SPAWN_TIME = 180.0f;
     const float       Game::ORTHO_WIDTH       = 800.0f;
@@ -107,8 +110,8 @@ namespace typing
         m_waveCreator.AddWave<SeekerEnemyWave>(3);
 
         // TODO: Sort this
-        m_bossWaves.push_back(EnemyWavePtr(new MissileBossEnemyWave));
-        m_bossWaves.push_back(EnemyWavePtr(new ChargeBossEnemyWave));
+        m_bossWaveCreator.AddWave<MissileBossEnemyWave>();
+        m_bossWaveCreator.AddWave<ChargeBossEnemyWave>();
 
         // Initialise powerups
         m_powerups.Register(CreatePowerup<ExtraLife>);
@@ -156,22 +159,24 @@ namespace typing
 
         m_nextWaveTime      = GAME_START_WAVE_PAUSE;
         m_bossWavePending   = false;
+        m_bossWaveActive    = false;
         m_bossWaveStartTime = 0.0f;
-        m_nextBossWaveIndex = 0;
 
         m_nextPowerupTime = RAND.Range(MIN_POWERUP_SPAWN_TIME,
                                        MAX_POWERUP_SPAWN_TIME);
 
         Mix_FadeInMusic(m_music, -1, MUSIC_FADE_IN_TIME);
+
+        APP.Log(App::LOG_DEBUG, "Starting new game");
     }
 
 
     void Game::SpawnEnemies()
     {
-        // TODO: Handle bosses
-
         // Work out whether we have waited long enough to start a new wave.
-        if (GetTime() >= m_nextWaveTime) {
+        // Don't spawn anything if a boss wave is pending or in progress.
+        if (GetTime() >= m_nextWaveTime &&
+            !m_bossWavePending && !m_bossWaveActive) {
             EnemyWavePtr wave = m_waveCreator.CreateWave(m_level);
             wave->Start();
             m_activeWaves.push_back(wave);
@@ -180,7 +185,25 @@ namespace typing
                 GetTime() + std::max(WAVE_INTERVAL_MIN,
                                      WAVE_INTERVAL_BASE -
                                                 WAVE_INTERVAL_SCALE * m_level);
-        } 
+            APP.Log(App::LOG_DEBUG,
+                    boost::str(boost::format(
+                        "%1%: Spawned new wave. Next wave at %2%")
+                        % GetTime() % m_nextWaveTime));
+        }
+
+        // Check if we should start a boss wave.
+        if (m_bossWavePending && m_activeWaves.size() == 0 &&
+            GetTime() >= m_bossWaveStartTime) {
+            EnemyWavePtr wave = m_bossWaveCreator.CreateWave();
+            wave->Start();
+            m_activeWaves.push_back(wave);
+            m_bossWavePending = false;
+            m_bossWaveActive = true;
+
+            APP.Log(App::LOG_DEBUG,
+                    boost::str(boost::format(
+                        "%1%: Spawned boss wave.") % GetTime()));
+        }
 
         // Spawn enemies from any active waves, remove any finished waves.
         for (WaveVec::iterator iter = m_activeWaves.begin();
@@ -188,17 +211,38 @@ namespace typing
             (*iter)->Spawn();
             
             if ((*iter)->IsFinished()) {
+                APP.Log(App::LOG_DEBUG,
+                        boost::str(boost::format(
+                            "%1%: Wave finished.") % GetTime()));
                 iter = m_activeWaves.erase(iter);
+
+                // Assume that if a boss wave is in progress, that this is
+                // the only wave active.
+                if (m_bossWaveActive) {
+                    m_bossWaveActive = false;
+                    m_level++;
+                    m_nextLevelTime = GetTime() + LEVEL_TIME;
+                }
             } else {
                 ++iter;
             }
         }
 
         // If there are no active waves, bring the next wave time forward.
-        if (m_activeWaves.size() == 0 &&
-            GAME.GetTime() - m_nextWaveTime > WAVES_CLEARED_PAUSE) {
-            m_nextWaveTime = GAME.GetTime() + m_nextWaveTime;
+        // Don't do this if the boss is pending, or we're waiting to spawn
+        // the first ever wave.
+        if (!m_bossWavePending && m_activeWaves.size() == 0 &&
+            GAME.GetTime() > GAME_START_WAVE_PAUSE &&
+            m_nextWaveTime - GAME.GetTime() > WAVES_CLEARED_PAUSE) {
+            m_nextWaveTime = GAME.GetTime() + WAVES_CLEARED_PAUSE;
+            APP.Log(App::LOG_DEBUG,
+                    boost::str(boost::format(
+                        "%1%: All waves finished, spawning next wave at %2%")
+                        % GetTime() % m_nextWaveTime));
         }
+
+        // TODO: Fix so boss warning/pause doesn't happen until the last wave
+        // is cleared.
     }
 
 
@@ -276,9 +320,11 @@ namespace typing
             }
         }
 
-        if (GetTime() > m_nextLevelTime) {
-            m_level++;
-            m_nextLevelTime = GetTime() + LEVEL_TIME;
+        if (!m_bossWaveActive && GetTime() > m_nextLevelTime) {
+            // Ready to go up to the next level, but need to spawn a boss
+            // first.
+            m_bossWavePending = true;
+            m_bossWaveStartTime = BOSS_WAVE_WAIT_TIME;
         }
 
         SpawnEnemies();
@@ -296,7 +342,7 @@ namespace typing
         const float HUD_TEXT_HEIGHT          = 16.0f;
         const float HUD_NUMBER_HEIGHT        = 32.0f;
         const float HUD_WARNING_HEIGHT       = 48.0f;
-        const float HUD_WARNING_BLINK_SPEED  = 4.0f;
+        //const float HUD_WARNING_BLINK_SPEED  = 4.0f;
         const float HUD_BOSS_APPROACH_HEIGHT = 16.0f;
         const float HUD_LIVES_X              = ORTHO_WIDTH / 4.0f;
         const float HUD_SCORE_X              = ORTHO_WIDTH / 2.0f;
@@ -371,9 +417,9 @@ namespace typing
             ColourRGBA::White(), Font::ALIGN_CENTER, boost::lexical_cast<std::string>(m_streak));
 
         if (m_bossWavePending) {
-            const float bossPendingTime = m_bossWaveStartTime - GetTime();
-            const float warningAlpha = abs(sinf(static_cast<float>(M_PI) * (bossPendingTime / BOSS_WAVE_WAIT_TIME) * HUD_WARNING_BLINK_SPEED));
-            ColourRGBA warningColour(ColourRGB::Red(), warningAlpha);
+            // const float bossPendingTime = m_bossWaveStartTime - GetTime();
+            //const float warningAlpha = abs(sinf(static_cast<float>(M_PI) * (bossPendingTime / BOSS_WAVE_WAIT_TIME) * HUD_WARNING_BLINK_SPEED));
+            ColourRGBA warningColour(ColourRGB::Red(), 1.0f);//warningAlpha);
 
             FONTS.Print(HUD_FONT, ORTHO_WIDTH / 2.0f, 0, HUD_WARNING_HEIGHT,
                 warningColour, Font::ALIGN_CENTER, "WARNING");

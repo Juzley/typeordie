@@ -24,6 +24,13 @@ namespace typing
     typedef std::shared_ptr<EnemyWave> EnemyWavePtr;
     typedef std::weak_ptr<EnemyWave>   EnemyWaveWeakPtr;
 
+    typedef EnemyWavePtr (*WaveCreateFn)();
+
+    template <typename T> static EnemyWavePtr CreateEnemyWave()
+    {
+        return EnemyWavePtr(new T);
+    }
+
     class RandomEnemyWaveFactory
     {
         public:
@@ -51,17 +58,38 @@ namespace typing
                 return createFn();
             }
         private:
-            typedef EnemyWavePtr (*WaveCreateFn)();
             typedef std::tuple<unsigned int, WaveCreateFn> WaveMapping;
             typedef std::vector<WaveMapping> WaveCreateVec;
 
             WaveCreateVec m_waves;
-
-            template <typename T> static EnemyWavePtr CreateEnemyWave()
-            {
-                return EnemyWavePtr(new T);
-            }
     };
+
+    class CyclicEnemyWaveFactory
+    {
+        public:
+            template <typename T> void AddWave()
+            {
+                m_waves.push_back(&CreateEnemyWave<T>);
+            }
+            
+            EnemyWavePtr CreateWave()
+            {
+                WaveCreateFn createFn = m_waves[m_index++ % m_waves.size()];
+                return createFn();
+            }
+
+            void Reset()
+            {
+                m_index = 0;
+            }
+
+        private:
+            typedef std::vector<WaveCreateFn> WaveCreateVec;
+
+            WaveCreateVec m_waves;
+            unsigned int  m_index;
+    };
+
 
 
     //////////////////////////////////////////////////////////////////////////
