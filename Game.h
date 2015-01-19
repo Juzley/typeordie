@@ -199,6 +199,7 @@ namespace typing
         float                        m_nextPowerupTime;
         unsigned int                 m_level;
         float                        m_nextLevelTime;
+        float                        m_damageTime;
 
         // Enemy spawn variables
         RandomEnemyWaveFactory       m_waveCreator;

@@ -70,6 +70,16 @@ namespace typing
         }
     }
 
+    void BasicEnemy::OnPlayerDie()
+    {
+        if (!m_unlink) {
+            GAME.MakeCharAvail(m_phrase.GetStartChar());
+            GAME.AddEffect(ExplosionPtr(
+                                new Explosion(m_origin, BASICENEMY_COLOUR)));
+            m_unlink = true;
+        }
+    }
+
 
     //////////////////////////////////////////////////////////////////////////
     // AccelEnemy
@@ -134,6 +144,16 @@ namespace typing
         }
     }
 
+    void AccelEnemy::OnPlayerDie()
+    {
+        if (!m_unlink) {
+            GAME.MakeCharAvail(m_phrase.GetStartChar());
+            GAME.AddEffect(ExplosionPtr(
+                                new Explosion(m_origin, ACCELENEMY_COLOUR)));
+            m_unlink = true;
+        }
+    }
+
 
     //////////////////////////////////////////////////////////////////////////
     // Missile
@@ -185,6 +205,16 @@ namespace typing
         if (*phraseFinished) {
             GAME.MakeCharAvail(m_phrase.GetStartChar());
             GAME.AddEffect(ExplosionPtr(new Explosion(m_origin, MISSILE_COLOUR)));
+            m_unlink = true;
+        }
+    }
+
+    void Missile::OnPlayerDie()
+    {
+        if (!m_unlink) {
+            GAME.MakeCharAvail(m_phrase.GetStartChar());
+            GAME.AddEffect(ExplosionPtr(
+                                    new Explosion(m_origin, MISSILE_COLOUR)));
             m_unlink = true;
         }
     }
@@ -250,7 +280,6 @@ namespace typing
         }
     }
 
-
     void MissileEnemy::OnType(char c, bool *hit, bool *phraseFinished)
     {
         *hit = m_phrase.OnType(c, GAME.GetTime());
@@ -259,6 +288,16 @@ namespace typing
         if (*phraseFinished) {
             GAME.MakeCharAvail(m_phrase.GetStartChar());
             GAME.AddEffect(ExplosionPtr(new Explosion(m_origin, MISSILEENEMY_COLOUR)));
+            m_unlink = true;
+        }
+    }
+
+    void MissileEnemy::OnPlayerDie()
+    {
+        if (!m_unlink) {
+            GAME.MakeCharAvail(m_phrase.GetStartChar());
+            GAME.AddEffect(ExplosionPtr(
+                                new Explosion(m_origin, MISSILEENEMY_COLOUR)));
             m_unlink = true;
         }
     }
@@ -335,6 +374,15 @@ namespace typing
         }
     }
 
+    void BombEnemy::OnPlayerDie()
+    {
+        if (!m_unlink) {
+            GAME.MakeCharAvail(m_phrase.GetStartChar());
+            GAME.AddEffect(ExplosionPtr(new Explosion(m_origin, BOMB_COLOUR)));
+            m_unlink = true;
+        }
+    }
+
     void BombEnemy::Detonate()
     {
         GAME.Damage();
@@ -357,7 +405,7 @@ namespace typing
     const ColourRGBA   SeekerEnemy::SEEKER_OUTLINECOLOUR(0.5f, 0.0f, 1.0f, 1.0f);
     const float        SeekerEnemy::SEEKER_SEEK_TIME = 3.0f;
     const float        SeekerEnemy::SEEKER_TURN_SPEED = 175.0f;
-    const float        SeekerEnemy::SEEKER_SEEK_MOVE_SPEED = 60.0f;
+    const float        SeekerEnemy::SEEKER_SEEK_MOVE_SPEED = 120.0f;
     const float        SeekerEnemy::SEEKER_ATTACK_MOVE_SPEED = 250.0f;
 
     void SeekerEnemy::Draw2D()
@@ -431,6 +479,16 @@ namespace typing
             m_unlink = true;
         } else if (m_seeking) {
             StartAttack();
+        }
+    }
+
+    void SeekerEnemy::OnPlayerDie()
+    {
+        if (!m_unlink) {
+            GAME.MakeCharAvail(m_phrase.GetStartChar());
+            GAME.AddEffect(ExplosionPtr(new Explosion(m_origin,
+                                                      SEEKER_COLOUR)));
+            m_unlink = true;
         }
     }
 

@@ -11,7 +11,7 @@ namespace typing
     const float SPAWN_TOP_MIN_X = 100.0f;
 
     // Max X coordinate for enemies that spawn at the top.
-    const float SPAWN_TOP_MAX_X = 900.0f;
+    const float SPAWN_TOP_MAX_X = 1300.0f;
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ namespace typing
     {
         const unsigned int ENEMIES_MIN = 2; 
         const unsigned int ENEMIES_MAX = 8;
-        const unsigned int ENEMIES_PER_LEVEL = 2;
+        const unsigned int ENEMIES_PER_LEVEL = 0;
         const float        SPEED_MIN = 100.0f;
         const float        SPEED_MAX = 200.0f;
         const float        SPEED_PER_LEVEL = 10.0f;
@@ -35,6 +35,12 @@ namespace typing
                      SPEED_MIN + GAME.GetLevel() * SPEED_PER_LEVEL);
 
         m_nextSpawnTime = 0;
+
+        APP.Log(App::LOG_DEBUG,
+                boost::str(boost::format(
+                    "Starting Basic Enemy Wave."
+                    " Level %1%, %2% enemies, %3% speed")
+                    % GAME.GetLevel() % m_enemyCount % m_enemySpeed));
     }
 
     void BasicEnemyWave::Spawn ()
@@ -75,7 +81,7 @@ namespace typing
     {
         const unsigned int ENEMIES_MIN = 2; 
         const unsigned int ENEMIES_MAX = 8;
-        const unsigned int ENEMIES_PER_LEVEL = 2;
+        const unsigned int ENEMIES_PER_LEVEL = 0;
         const float        SPEED_MIN = 100.0f;
         const float        SPEED_MAX = 200.0f;
         const float        SPEED_PER_LEVEL = 10.0f;
@@ -88,6 +94,12 @@ namespace typing
                      SPEED_MIN + GAME.GetLevel() * SPEED_PER_LEVEL);
 
         m_nextSpawnTime = 0;
+
+        APP.Log(App::LOG_DEBUG,
+                boost::str(boost::format(
+                    "Starting Accel Enemy Wave."
+                    " Level %1%, %2% enemies, %3% speed")
+                    % GAME.GetLevel() % m_enemyCount % m_enemySpeed));
     }
 
     void AccelEnemyWave::Spawn ()
@@ -128,12 +140,17 @@ namespace typing
     {
         const unsigned int ENEMIES_MIN = 2;
         const unsigned int ENEMIES_MAX = 6;
-        const unsigned int ENEMIES_PER_LEVEL = 1;
+        const unsigned int ENEMIES_PER_LEVEL = 0;
         
         m_enemyCount =
             std::min(ENEMIES_MAX,
                      ENEMIES_MIN + GAME.GetLevel() * ENEMIES_PER_LEVEL);
         m_nextSpawnTime = 0.0f;
+
+        APP.Log(App::LOG_DEBUG,
+                boost::str(boost::format(
+                    "Starting Missile Enemy Wave. Level %1%, %2% enemies")
+                    % GAME.GetLevel() % m_enemyCount));
     }
 
     void MissileEnemyWave::Spawn()
@@ -183,17 +200,21 @@ namespace typing
     // BombEnemyWave
     //////////////////////////////////////////////////////////////////////////
 
-
     void BombEnemyWave::Start()
     {
         const unsigned int ENEMIES_MIN = 2;
         const unsigned int ENEMIES_MAX = 6;
-        const unsigned int ENEMIES_PER_LEVEL = 1;
+        const unsigned int ENEMIES_PER_LEVEL = 0;
         
         m_enemyCount =
             std::min(ENEMIES_MAX,
                      ENEMIES_MIN + GAME.GetLevel() * ENEMIES_PER_LEVEL);
         m_nextSpawnTime = 0.0f;
+
+        APP.Log(App::LOG_DEBUG,
+                boost::str(boost::format(
+                    "Starting Bomb Enemy Wave. Level %1%, %2% enemies")
+                    % GAME.GetLevel() % m_enemyCount));
     }
 
     void BombEnemyWave::Spawn()
@@ -236,12 +257,17 @@ namespace typing
     {
         const unsigned int ENEMIES_MIN = 4;
         const unsigned int ENEMIES_MAX = 12;
-        const unsigned int ENEMIES_PER_LEVEL = 1;
+        const unsigned int ENEMIES_PER_LEVEL = 0;
 
         m_enemyCount =
             std::min(ENEMIES_MAX,
                      ENEMIES_MIN + GAME.GetLevel() * ENEMIES_PER_LEVEL);
         m_nextSpawnTime = 0.0f;
+
+        APP.Log(App::LOG_DEBUG,
+                boost::str(boost::format(
+                    "Starting Missile Enemy Wave. Level %1%, %2% enemies")
+                    % GAME.GetLevel() % m_enemyCount));
     }
 
     void SeekerEnemyWave::Spawn()

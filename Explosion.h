@@ -39,7 +39,7 @@ namespace typing
         static const float        START_ALPHA;
         static const float        LIFETIME;
         static const float        FRAGMENT_SIZE;
-        static const unsigned int FRAGMENTS = 20;
+        static const unsigned int FRAGMENTS = 40;
         static const float        FLARE_START_SIZE;
         static const float        FLARE_START_ALPHA;
         static const float        FLARE_EXPAND_SPEED;

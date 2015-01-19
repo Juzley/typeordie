@@ -34,6 +34,13 @@ namespace typing
         {
         }
 
+        // OnPlayerDie
+        // Called when the player loses a life. Used eg. to ensure all enemies
+        // are removed when the player dies.
+        virtual void OnPlayerDie()
+        {
+        }
+
         // Draw2D
         // Called once a frame to render the 2D aspects of the entity's appearance.
         // This is mainly used for drawing the phrase associated with an entity.
@@ -65,9 +72,9 @@ namespace typing
         }
 
         // SuppressAwardDisplay
-        // Called when the award for an entity's phrase is displayed, to determine whether
-        // the award display should be suppressed, for example if the entity will add its
-        // own award.
+        // Called when the award for an entity's phrase is displayed,
+        // to determine whether the award display should be suppressed,
+        // for example if the entity will add its own award.
         virtual bool SuppressAwardDisplay()
         {
             return false;

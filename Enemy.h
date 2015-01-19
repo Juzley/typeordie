@@ -29,6 +29,7 @@ namespace typing
         void OnSpawn();
         void OnCollide();
         void OnType(char c, bool *hit, bool *phraseFinished);
+        void OnPlayerDie();
 
         const juzutil::Vector3& GetOrigin() const
         {
@@ -110,6 +111,7 @@ namespace typing
         void OnSpawn();
         void OnCollide();
         void OnType(char c, bool *hit, bool *phraseFinished);
+        void OnPlayerDie();
 
         const juzutil::Vector3& GetOrigin() const
         {
@@ -192,6 +194,7 @@ namespace typing
         void OnSpawn();
         void OnCollide();
         void OnType(char c, bool *hit, bool *phraseFinished);
+        void OnPlayerDie();
 
         const juzutil::Vector3& GetOrigin() const
         {
@@ -273,6 +276,7 @@ namespace typing
         void OnSpawn();
         void OnFinished();
         void OnType(char c, bool *hit, bool *phraseFinished);
+        void OnPlayerDie();
 
         const juzutil::Vector3& GetOrigin() const
         {
@@ -351,6 +355,7 @@ namespace typing
         void Draw3D();
         void OnSpawn();
         void OnType(char c, bool *hit, bool *phraseFinished);
+        void OnPlayerDie();
 
         const juzutil::Vector3& GetOrigin() const
         {
@@ -435,6 +440,7 @@ namespace typing
         void OnSpawn();
         void OnType(char c, bool *hit, bool *phraseFinished);
         void OnCollide();
+        void OnPlayerDie();
 
         const juzutil::Vector3& GetOrigin() const
         {

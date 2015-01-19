@@ -51,6 +51,10 @@ namespace typing
     // the boss appears.
     static const float BOSS_WAVE_WAIT_TIME = 5.0f;
 
+    // The length of time the flash appears on the screen when the player is
+    // damaged.
+    static const float DAMAGE_FLASH_TIME = 0.5f;
+
     const float       Game::GAME_SCREEN_TOP = 1000.0f;
     const float       Game::GAME_SCREEN_BOTTOM = -100.0f;
     const float       Game::GAME_SCREEN_LEFT = -775.0f;
@@ -142,7 +146,7 @@ namespace typing
         m_score         = 0;
         m_streakValid   = false;
         m_streak        = 0;
-        m_invincible    = false;
+        m_damageTime    = 0.0f;
 
         m_hits        = 0;
         m_misses      = 0;
@@ -404,6 +408,17 @@ namespace typing
         glEnd();
         glLineWidth(1.0f);
 
+        if (m_usedLives && (GetTime() - m_damageTime) < DAMAGE_FLASH_TIME) {
+            glColor4f(1.0f, 1.0f, 1.0f,
+                      1.0f - ((GetTime() - m_damageTime) / DAMAGE_FLASH_TIME));
+            glBegin(GL_QUADS);
+                glVertex2f(0.0f, ORTHO_HEIGHT);
+                glVertex2f(ORTHO_WIDTH, ORTHO_HEIGHT);
+                glVertex2f(ORTHO_WIDTH, 0.0f);
+                glVertex2f(0.0f, 0.0f);
+            glEnd();
+        }
+
         glEnable(GL_TEXTURE_2D);
 
         FONTS.Print(HUD_FONT, HUD_LIVES_X,
@@ -452,7 +467,7 @@ namespace typing
         const float BACKGROUND_Z_COORD      = -50.0f;
         const float BACKGROUND_COS_THETA    = 0.866025f;
         const float BACKGROUND_SIN_THETA    = 0.5f;
-        const float BACKGROUND_CURVE_FACTOR = 0.005f;
+        const float BACKGROUND_CURVE_FACTOR = 0.0006f;
 
         glDisable(GL_TEXTURE_2D);
         glColor4f(0.1f, 0.1f, 0.1f, 1.0f);
@@ -666,8 +681,8 @@ namespace typing
             {
                 m_player.Draw();
 
-                // If we have a current target, draw a targetting line from the player
-                // to the target.
+                // If we have a current target, draw a targetting line from the
+                // player to the target.
                 EntityPtr ent = m_targetEnt.lock();
                 if (ent)
                 {
@@ -686,31 +701,36 @@ namespace typing
                 }
             }
 
-            for_each(m_entities.begin(), m_entities.end(), boost::mem_fn(&Entity::Draw3D));
-            for_each(m_effects.begin(), m_effects.end(), boost::mem_fn(&Effect::Draw));
+            for_each(m_entities.begin(),
+                     m_entities.end(),
+                     boost::mem_fn(&Entity::Draw3D));
+            for_each(m_effects.begin(),
+                     m_effects.end(),
+                     boost::mem_fn(&Effect::Draw));
 
-            // Use an orthographic projection for drawing the phrases as we want the text
-            // to appear the same size no matter where it is being drawn.
+            // Use an orthographic projection for drawing the phrases as we
+            // want the text to appear the same size no matter where it is
+            // being drawn.
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             glOrtho(0.0, ORTHO_WIDTH, ORTHO_HEIGHT, 0.0, -1, 1);
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
 
-            for_each(m_entities.begin(), m_entities.end(), boost::mem_fn(&Entity::Draw2D));
-            for_each(m_effects2d.begin(), m_effects2d.end(), boost::mem_fn(&Effect::Draw));
+            for_each(m_entities.begin(),
+                     m_entities.end(),
+                     boost::mem_fn(&Entity::Draw2D));
+            for_each(m_effects2d.begin(),
+                     m_effects2d.end(),
+                     boost::mem_fn(&Effect::Draw));
 
-            if (!HasGameEnded())
-            {
+            if (!HasGameEnded()) {
                 DrawHud();
-            }
-            else
-            {
+            } else {
                 DrawEndScreen();
             }
         }
     }
-
 
     // When we've finished a phrase, decides what award to give to the player,
     // and adds it to the list to be displayed on screen.
@@ -872,15 +892,19 @@ namespace typing
     {
         m_player.Damage();
 
-        if (!m_invincible && m_lives > 0) {
+        if (m_lives > 0) {
             m_lives--;
             m_usedLives++;
+            m_damageTime = GetTime();
+
+            for_each (m_entities.begin(),
+                      m_entities.end(),
+                      boost::mem_fn(&Entity::OnPlayerDie));
 
             if (m_lives == 0) {
-                ExplosionPtr explosion(new Explosion(GetPlayerOrigin(),
-                                                     ColourRGBA::Red()));
+                ExplosionPtr explosion(
+                    new Explosion(GetPlayerOrigin(), ColourRGBA::Red()));
                 AddEffect(explosion);
-
                 EndGame(FINAL_DEATH_PAUSE);
             }
         }
