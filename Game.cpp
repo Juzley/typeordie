@@ -49,7 +49,7 @@ namespace typing
 
     // The length of time to pause on reaching the end of the level before
     // the boss appears.
-    static const float BOSS_WAVE_WAIT_TIME = 3.0f;
+    static const float BOSS_WAVE_WAIT_TIME = 5.0f;
 
     const float       Game::GAME_SCREEN_TOP = 1000.0f;
     const float       Game::GAME_SCREEN_BOTTOM = -100.0f;
@@ -127,6 +127,7 @@ namespace typing
         m_entities.clear();
         m_effects.clear();
         m_effects2d.clear();
+        m_activeWaves.clear();
         m_lives = GAME_START_LIVES;
 
         Pause(false);
@@ -205,6 +206,12 @@ namespace typing
                         "%1%: Spawned boss wave.") % GetTime()));
         }
 
+        // If we're waiting for a boss and there are still active waves, push
+        // the boss spawn time back.
+        if (m_bossWavePending && m_activeWaves.size() > 0) {
+            m_bossWaveStartTime = GetTime() + BOSS_WAVE_WAIT_TIME;
+        }
+
         // Spawn enemies from any active waves, remove any finished waves.
         for (WaveVec::iterator iter = m_activeWaves.begin();
              iter != m_activeWaves.end();) {
@@ -240,9 +247,6 @@ namespace typing
                         "%1%: All waves finished, spawning next wave at %2%")
                         % GetTime() % m_nextWaveTime));
         }
-
-        // TODO: Fix so boss warning/pause doesn't happen until the last wave
-        // is cleared.
     }
 
 
@@ -320,11 +324,12 @@ namespace typing
             }
         }
 
-        if (!m_bossWaveActive && GetTime() > m_nextLevelTime) {
+        if (!m_bossWavePending && !m_bossWaveActive &&
+            GetTime() > m_nextLevelTime) {
             // Ready to go up to the next level, but need to spawn a boss
             // first.
             m_bossWavePending = true;
-            m_bossWaveStartTime = BOSS_WAVE_WAIT_TIME;
+            m_bossWaveStartTime = GetTime() + BOSS_WAVE_WAIT_TIME;
         }
 
         SpawnEnemies();
@@ -342,7 +347,7 @@ namespace typing
         const float HUD_TEXT_HEIGHT          = 16.0f;
         const float HUD_NUMBER_HEIGHT        = 32.0f;
         const float HUD_WARNING_HEIGHT       = 48.0f;
-        //const float HUD_WARNING_BLINK_SPEED  = 4.0f;
+        const float HUD_WARNING_BLINK_SPEED  = 4.0f;
         const float HUD_BOSS_APPROACH_HEIGHT = 16.0f;
         const float HUD_LIVES_X              = ORTHO_WIDTH / 4.0f;
         const float HUD_SCORE_X              = ORTHO_WIDTH / 2.0f;
@@ -401,25 +406,35 @@ namespace typing
 
         glEnable(GL_TEXTURE_2D);
 
-        FONTS.Print(HUD_FONT, HUD_LIVES_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT - HUD_TEXT_HEIGHT, HUD_TEXT_HEIGHT,
-            ColourRGBA::White(), Font::ALIGN_CENTER, "LIVES");
-        FONTS.Print(HUD_FONT, HUD_LIVES_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT, HUD_NUMBER_HEIGHT,
-            ColourRGBA::White(), Font::ALIGN_CENTER, boost::lexical_cast<std::string>(m_lives));
+        FONTS.Print(HUD_FONT, HUD_LIVES_X,
+                    ORTHO_HEIGHT - HUD_NUMBER_HEIGHT - HUD_TEXT_HEIGHT,
+                    HUD_TEXT_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
+                    "LIVES");
+        FONTS.Print(HUD_FONT, HUD_LIVES_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT,
+                    HUD_NUMBER_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
+                    boost::lexical_cast<std::string>(m_lives));
+        FONTS.Print(HUD_FONT, HUD_SCORE_X,
+                    ORTHO_HEIGHT - HUD_NUMBER_HEIGHT - HUD_TEXT_HEIGHT,
+                    HUD_TEXT_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
+                    "SCORE");
+        FONTS.Print(HUD_FONT, HUD_SCORE_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT,
+                    HUD_NUMBER_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
+                    boost::lexical_cast<std::string>(m_score));
+        FONTS.Print(HUD_FONT, HUD_STREAK_X,
+                    ORTHO_HEIGHT - HUD_NUMBER_HEIGHT - HUD_TEXT_HEIGHT,
+                    HUD_TEXT_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
+                    "STREAK");
+        FONTS.Print(HUD_FONT, HUD_STREAK_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT,
+                    HUD_NUMBER_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
+                    boost::lexical_cast<std::string>(m_streak));
 
-        FONTS.Print(HUD_FONT, HUD_SCORE_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT - HUD_TEXT_HEIGHT, HUD_TEXT_HEIGHT,
-            ColourRGBA::White(), Font::ALIGN_CENTER, "SCORE");
-        FONTS.Print(HUD_FONT, HUD_SCORE_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT, HUD_NUMBER_HEIGHT,
-            ColourRGBA::White(), Font::ALIGN_CENTER, boost::lexical_cast<std::string>(m_score));
-
-        FONTS.Print(HUD_FONT, HUD_STREAK_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT - HUD_TEXT_HEIGHT, HUD_TEXT_HEIGHT,
-            ColourRGBA::White(), Font::ALIGN_CENTER, "STREAK");
-        FONTS.Print(HUD_FONT, HUD_STREAK_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT, HUD_NUMBER_HEIGHT,
-            ColourRGBA::White(), Font::ALIGN_CENTER, boost::lexical_cast<std::string>(m_streak));
-
-        if (m_bossWavePending) {
-            // const float bossPendingTime = m_bossWaveStartTime - GetTime();
-            //const float warningAlpha = abs(sinf(static_cast<float>(M_PI) * (bossPendingTime / BOSS_WAVE_WAIT_TIME) * HUD_WARNING_BLINK_SPEED));
-            ColourRGBA warningColour(ColourRGB::Red(), 1.0f);//warningAlpha);
+        if (m_bossWavePending && m_activeWaves.size() == 0) {
+            const float bossPendingTime = m_bossWaveStartTime - GetTime();
+            const float warningAlpha =
+                            fabs(sinf(static_cast<float>(M_PI) *
+                                     (bossPendingTime / BOSS_WAVE_WAIT_TIME) *
+                                     HUD_WARNING_BLINK_SPEED));
+            ColourRGBA warningColour(ColourRGB::Red(), warningAlpha);
 
             FONTS.Print(HUD_FONT, ORTHO_WIDTH / 2.0f, 0, HUD_WARNING_HEIGHT,
                 warningColour, Font::ALIGN_CENTER, "WARNING");
@@ -672,7 +687,6 @@ namespace typing
             }
 
             for_each(m_entities.begin(), m_entities.end(), boost::mem_fn(&Entity::Draw3D));
-            // TODO: one effects list with Draw2D and Draw3D, like ent
             for_each(m_effects.begin(), m_effects.end(), boost::mem_fn(&Effect::Draw));
 
             // Use an orthographic projection for drawing the phrases as we want the text
@@ -876,10 +890,7 @@ namespace typing
     void Game::EndGame(float pause)
     {
         const float MUSIC_FADE_OUT_TIME = 2.0f;
-
-        m_lives = 0;
         m_gameEndTime = GetTime() + pause;
-
         Mix_FadeOutMusic(static_cast<int>((pause + MUSIC_FADE_OUT_TIME) * 1000));
     }
 }
