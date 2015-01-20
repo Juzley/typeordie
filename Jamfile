@@ -1,5 +1,5 @@
 OPTIM = -std=c++11 -Werror -Wall -Wextra -g -O0 -D_DEBUG ;
-LINKLIBS on typeordie = -lm -lSDL -lSDL_mixer -lGL -lGLU -lstdc++ ;
+LINKLIBS on typeordie = -lm -lSDL -lSDL_mixer -lGL -lGLU -lstdc++ -lglut ;
 Main typeordie :
     App.cpp
     Award.cpp

@@ -1,3 +1,4 @@
+#include <boost/format.hpp>
 #include "EnemyWave.h"
 #include "Game.h"
 #include "Random.h"
@@ -11,7 +12,7 @@ namespace typing
     const float SPAWN_TOP_MIN_X = 100.0f;
 
     // Max X coordinate for enemies that spawn at the top.
-    const float SPAWN_TOP_MAX_X = 1300.0f;
+    const float SPAWN_TOP_MAX_X = 1100.0f;
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -53,7 +54,7 @@ namespace typing
                 (m_enemies.size() % 2 == 0 ? 1.0f : -1.0f);
 
             BasicEnemyPtr enemy(
-                new BasicEnemy(GAME.GetPhrase(PhraseBook::PL_TINY),
+                new BasicEnemy(GAME.GetPhrase(PhraseBook::PL_MEDIUM),
                                juzutil::Vector3(x, SPAWN_TOP_Y, 0.0f),
                                m_enemySpeed));
             m_enemies.push_back(enemy);
@@ -112,7 +113,7 @@ namespace typing
                 (m_enemies.size() % 2 == 0 ? 1.0f : -1.0f);
 
             AccelEnemyPtr enemy(
-                new AccelEnemy(GAME.GetPhrase(PhraseBook::PL_SHORT),
+                new AccelEnemy(GAME.GetPhrase(PhraseBook::PL_LONG),
                                juzutil::Vector3(x, SPAWN_TOP_Y, 0.0f),
                                m_enemySpeed));
             m_enemies.push_back(enemy);
@@ -176,7 +177,7 @@ namespace typing
             y = SPAWN_Y_BASE + SPAWN_Y_GAP * m_enemies.size();
 
             MissileEnemyPtr enemy(
-                new MissileEnemy(GAME.GetPhrase(PhraseBook::PL_MEDIUM),
+                new MissileEnemy(GAME.GetComboPhrase(2, PhraseBook::PL_MEDIUM),
                                  juzutil::Vector3(x, y, 0.0f),
                                  dir));
             m_enemies.push_back(enemy);
@@ -230,7 +231,7 @@ namespace typing
                                  RAND.Range(SPAWN_AREA.GetMin().GetY(),
                                             SPAWN_AREA.GetMax().GetY()));
             BombEnemyPtr bombEnemy(
-                new BombEnemy(GAME.GetPhrase(PhraseBook::PL_MEDIUM),
+                new BombEnemy(GAME.GetPhrase(PhraseBook::PL_LONG),
                               juzutil::Vector3(org)));
             m_enemies.push_back(bombEnemy);
             GAME.AddEntity(bombEnemy);
@@ -280,7 +281,7 @@ namespace typing
                 (m_enemies.size() % 2 == 0 ? 1.0f : -1.0f);
 
             SeekerEnemyPtr enemy(
-                new SeekerEnemy(GAME.GetPhrase(PhraseBook::PL_MEDIUM),
+                new SeekerEnemy(GAME.GetPhrase(PhraseBook::PL_LONG),
                                 juzutil::Vector3(x, SPAWN_TOP_Y, 0.0f)));
             m_enemies.push_back(enemy);
             GAME.AddEntity(enemy);

@@ -1,5 +1,5 @@
 #include <memory>
-#include <boost/random.hpp>
+#include <random>
 
 #ifndef __RANDOM_H__
 #define __RANDOM_H__
@@ -11,7 +11,7 @@ namespace typing
     public:
         void Seed (unsigned int seed)
         {
-            m_rng.seed(static_cast<boost::uint32_t>(seed));
+            m_rng.seed(seed);
         }
 
         int Range (int min, int max)
@@ -19,10 +19,8 @@ namespace typing
             if (min == max) {
                 return (max);
             } else {
-
-                boost::uniform_int<> range(min, max);
-                boost::variate_generator<boost::mt19937&, boost::uniform_int<> > die(m_rng, range);
-                return die();
+                std::uniform_int_distribution<int> range(min, max);
+                return range(m_rng);
             }
         }
 
@@ -41,16 +39,15 @@ namespace typing
             if (min == max) {
                 return (max);
             } else {
-                boost::uniform_real<> range(min, max);
-                boost::variate_generator<boost::mt19937&, boost::uniform_real<> > die(m_rng, range);
-                return die();
+                std::uniform_real_distribution<double> range(min, max);
+                return range(m_rng);
             }
         }
 
         // Singleton implementation
         static Random& GetRandom();
     private:
-        boost::mt19937 m_rng;
+        std::mt19937 m_rng;
 
         // Singleton implementation
         static std::auto_ptr<Random> m_singleton;

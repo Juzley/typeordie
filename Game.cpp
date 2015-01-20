@@ -1,7 +1,7 @@
 #include <ctime>
-#include <boost/bind.hpp>
-#include <boost/random.hpp>
-#include <boost/lexical_cast.hpp>
+#include <functional>
+#include <random>
+#include <string>
 #include <boost/format.hpp>
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
@@ -28,7 +28,7 @@
 namespace typing
 {
     // The length of time, in seconds, between levels.
-    static const float LEVEL_TIME = 30.0f;
+    static const float LEVEL_TIME = 60.0f;
 
     // The length of time, in seconds, between waves.
     static const float WAVE_INTERVAL_BASE = 10.0f;
@@ -77,10 +77,11 @@ namespace typing
     }
 
     Game::Game()
-        : m_camera(juzutil::Vector3(0.0f, -200.0f, 500.0f), juzutil::Vector3(0.0f, 200.0f, 0.0f)), m_active(false)
+        : m_camera(juzutil::Vector3(0.0f, -200.0f, 500.0f),
+                   juzutil::Vector3(0.0f, 200.0f, 0.0f)),
+          m_active(false)
     {
     }
-
 
     void Game::Init ()
     {
@@ -427,21 +428,21 @@ namespace typing
                     "LIVES");
         FONTS.Print(HUD_FONT, HUD_LIVES_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT,
                     HUD_NUMBER_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
-                    boost::lexical_cast<std::string>(m_lives));
+                    std::to_string(m_lives));
         FONTS.Print(HUD_FONT, HUD_SCORE_X,
                     ORTHO_HEIGHT - HUD_NUMBER_HEIGHT - HUD_TEXT_HEIGHT,
                     HUD_TEXT_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
                     "SCORE");
         FONTS.Print(HUD_FONT, HUD_SCORE_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT,
                     HUD_NUMBER_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
-                    boost::lexical_cast<std::string>(m_score));
+                    std::to_string(m_score));
         FONTS.Print(HUD_FONT, HUD_STREAK_X,
                     ORTHO_HEIGHT - HUD_NUMBER_HEIGHT - HUD_TEXT_HEIGHT,
                     HUD_TEXT_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
                     "STREAK");
         FONTS.Print(HUD_FONT, HUD_STREAK_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT,
                     HUD_NUMBER_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
-                    boost::lexical_cast<std::string>(m_streak));
+                    std::to_string(m_streak));
 
         if (m_bossWavePending && m_activeWaves.size() == 0) {
             const float bossPendingTime = m_bossWaveStartTime - GetTime();
@@ -703,10 +704,10 @@ namespace typing
 
             for_each(m_entities.begin(),
                      m_entities.end(),
-                     boost::mem_fn(&Entity::Draw3D));
+                     std::mem_fn(&Entity::Draw3D));
             for_each(m_effects.begin(),
                      m_effects.end(),
-                     boost::mem_fn(&Effect::Draw));
+                     std::mem_fn(&Effect::Draw));
 
             // Use an orthographic projection for drawing the phrases as we
             // want the text to appear the same size no matter where it is
@@ -719,10 +720,10 @@ namespace typing
 
             for_each(m_entities.begin(),
                      m_entities.end(),
-                     boost::mem_fn(&Entity::Draw2D));
+                     std::mem_fn(&Entity::Draw2D));
             for_each(m_effects2d.begin(),
                      m_effects2d.end(),
-                     boost::mem_fn(&Effect::Draw));
+                     std::mem_fn(&Effect::Draw));
 
             if (!HasGameEnded()) {
                 DrawHud();
@@ -800,6 +801,8 @@ namespace typing
 
     void Game::OnType (const SDL_keysym sym)
     {
+        using namespace std::placeholders;
+
         bool miss = false;
 
         if (!IsActive()) {
@@ -837,7 +840,7 @@ namespace typing
                 // with the letter the player has typed.
                 EntityList::iterator target =
                     find_if(m_entities.begin(), m_entities.end(),
-                            boost::bind(&Entity::StartsWith, _1, c));
+                            std::bind(&Entity::StartsWith, _1, c));
 
                 if (target == m_entities.end()) {
                     // We didn't find any targets starting with the letter the
@@ -897,9 +900,9 @@ namespace typing
             m_usedLives++;
             m_damageTime = GetTime();
 
-            for_each (m_entities.begin(),
-                      m_entities.end(),
-                      boost::mem_fn(&Entity::OnPlayerDie));
+            for_each(m_entities.begin(),
+                     m_entities.end(),
+                     std::mem_fn(&Entity::OnPlayerDie));
 
             if (m_lives == 0) {
                 ExplosionPtr explosion(

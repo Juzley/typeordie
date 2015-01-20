@@ -1,19 +1,24 @@
 #include <algorithm>
-#include <boost/mem_fn.hpp>
+#include <functional>
 #include "MenuScreen.h"
 
 namespace typing
 {
     void MenuScreen::Draw()
     {
-        for_each(m_menuItems.begin(), m_menuItems.end(), boost::mem_fn(&MenuItem::Draw));
+        for_each(m_menuItems.begin(),
+                 m_menuItems.end(),
+                 std::mem_fn(&MenuItem::Draw));
     }
 
     MenuScreen::NextAction MenuScreen::OnType(const SDL_keysym sym)
     {
         if (sym.sym == SDLK_RETURN)
         {
-            MenuItems::iterator iter = find_if(m_menuItems.begin(), m_menuItems.end(), boost::mem_fn(&MenuItem::IsSelected));
+            MenuItems::iterator iter = find_if(
+                                        m_menuItems.begin(),
+                                        m_menuItems.end(),
+                                        std::mem_fn(&MenuItem::IsSelected));
 
             if (iter != m_menuItems.end())
             {
@@ -22,7 +27,10 @@ namespace typing
         }
         else if (sym.sym == SDLK_DOWN || sym.sym == SDLK_RIGHT)
         {
-            MenuItems::iterator iter = find_if(m_menuItems.begin(), m_menuItems.end(), boost::mem_fn(&MenuItem::IsSelected));
+            MenuItems::iterator iter = find_if(
+                                        m_menuItems.begin(),
+                                        m_menuItems.end(),
+                                        std::mem_fn(&MenuItem::IsSelected));
 
             if (iter != m_menuItems.end())
             {
@@ -38,7 +46,10 @@ namespace typing
         }
         else if (sym.sym == SDLK_UP || sym.sym == SDLK_LEFT)
         {
-            MenuItems::iterator iter = find_if(m_menuItems.begin(), m_menuItems.end(), boost::mem_fn(&MenuItem::IsSelected));
+            MenuItems::iterator iter = find_if(
+                                        m_menuItems.begin(),
+                                        m_menuItems.end(),
+                                        std::mem_fn(&MenuItem::IsSelected));
 
             if (iter != m_menuItems.end())
             {

@@ -2,7 +2,7 @@
 #define __UTILS_H__
 
 #include <string>
-#include <boost/random.hpp>
+#include <random>
 #include "Vector.h"
 #include "Matrix.h"
 
@@ -23,8 +23,8 @@ namespace typing
     void DrawLine(const ColourRGBA& col, const juzutil::Vector2& start, const juzutil::Vector2& end);
 
     // Enemy spawn utility funcs
-    const juzutil::Vector2 SelectEdgeSpawnPoint(boost::mt19937& random);
-    const juzutil::Vector2 SelectMidSpawnPoint(boost::mt19937& random);
+    const juzutil::Vector2 SelectEdgeSpawnPoint(std::mt19937& random);
+    const juzutil::Vector2 SelectMidSpawnPoint(std::mt19937& random);
     const juzutil::Vector2 SelectEnemyDirection(const juzutil::Vector3& spawnPoint, float dist);
 
 	// Misc Utils

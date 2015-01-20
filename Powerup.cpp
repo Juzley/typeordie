@@ -28,7 +28,7 @@ namespace typing
             unsigned int index = RAND.Range(static_cast<unsigned int>(0),
                                             static_cast<unsigned int>(m_creators.size() - 1));
             PowerupCreator create = m_creators.at(index);
-            return create(GAME.GetPhrase(PhraseBook::PL_SHORT), origin);
+            return create(GAME.GetPhrase(PhraseBook::PL_LONG), origin);
         }
     }
 

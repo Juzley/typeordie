@@ -98,17 +98,16 @@ namespace typing
     //////////////////////////////////////////////////////////////////////////
 
     // Selects a random spawn point for an enemy at the edge of the screen.
-    const juzutil::Vector2 SelectEdgeSpawnPoint(boost::mt19937& random)
+    const juzutil::Vector2 SelectEdgeSpawnPoint(std::mt19937& random)
     {
         enum screenSide { SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM };
         const float SIDE_OFFSET = 30.0f;
 
-        boost::uniform_int<> sides(SCREEN_LEFT, SCREEN_BOTTOM);
+        std::uniform_int_distribution<> sides(SCREEN_LEFT, SCREEN_BOTTOM);
 
-        boost::variate_generator<boost::mt19937&, boost::uniform_int<> > sideGen(random, sides);
-        screenSide side = static_cast<screenSide>(sideGen());
+        screenSide side = static_cast<screenSide>(sides(random));
 
-        boost::uniform_real<>  distGen(0, 1);
+        std::uniform_real_distribution<> distGen(0, 1);
         float dist = static_cast<float>(distGen(random));
 
         switch (side)
@@ -130,12 +129,14 @@ namespace typing
     }
 
     // Selects a random spawn point for an entity in the middle of the screen.
-    const juzutil::Vector2 SelectMidSpawnPoint(boost::mt19937& random)
+    const juzutil::Vector2 SelectMidSpawnPoint(std::mt19937& random)
     {
         const float EDGE_DEAD_ZONE = 50.0f;
         const float MID_DEAD_ZONE  = 50.0f;
 
-        boost::uniform_real<> xGen(EDGE_DEAD_ZONE, APP.GetScreenWidth() - MID_DEAD_ZONE - EDGE_DEAD_ZONE);
+        std::uniform_real_distribution<> xGen(
+                    EDGE_DEAD_ZONE,
+                    APP.GetScreenWidth() - MID_DEAD_ZONE - EDGE_DEAD_ZONE);
         float x = static_cast<float>(xGen(random));
 
         if (x + EDGE_DEAD_ZONE * 2.0f > (APP.GetScreenWidth() - MID_DEAD_ZONE) / 2.0f)
@@ -143,7 +144,9 @@ namespace typing
             x += MID_DEAD_ZONE;
         }
 
-        boost::uniform_real<> yGen(EDGE_DEAD_ZONE, APP.GetScreenHeight() - MID_DEAD_ZONE - EDGE_DEAD_ZONE);
+        std::uniform_real_distribution<> yGen(
+                    EDGE_DEAD_ZONE,
+                    APP.GetScreenHeight() - MID_DEAD_ZONE - EDGE_DEAD_ZONE);
         float y = static_cast<float>(yGen(random));
 
         if (y + EDGE_DEAD_ZONE * 2.0f > (APP.GetScreenHeight() - MID_DEAD_ZONE) / 2.0f)

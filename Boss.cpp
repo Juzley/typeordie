@@ -11,8 +11,8 @@ namespace typing
 {
     // The bosses start from the top of the screen and move in before
     // starting their pattern.
-    const juzutil::Vector3 BOSS_START_ORIGIN(0.0f, 700.0f, 0.0f);
-    const juzutil::Vector3 BOSS_DEST_ORIGIN(0.0f, 600.0f, 0.0f);
+    const juzutil::Vector3 BOSS_START_ORIGIN(0.0f, 1400.0f, 0.0f);
+    const juzutil::Vector3 BOSS_DEST_ORIGIN(0.0f, 700.0f, 0.0f);
     const float            BOSS_DEST_EPSILON = 5.0f;
     const float            BOSS_ENTRY_SPEED = 100.0f;
     
@@ -71,7 +71,7 @@ namespace typing
 
             m_moving = !m_origin.Equals(BOSS_DEST_ORIGIN, BOSS_DEST_EPSILON);
             if (!m_moving) {
-                m_phrase.Reset(GAME.GetPhrase(PhraseBook::PL_LONG));
+                m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_LONG));
                 CalcNextChargeTime();
             }
         } else {
@@ -95,7 +95,7 @@ namespace typing
             GAME.MakeCharAvail(m_phrase.GetStartChar());
             --m_health;
             if (m_health > 0) {
-                m_phrase.Reset(GAME.GetPhrase(PhraseBook::PL_LONG));
+                m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_LONG));
                 CalcNextChargeTime();
             } else {
                 ExplosionPtr explosion(new Explosion(m_origin, m_colour));
@@ -148,7 +148,7 @@ namespace typing
 
             m_moving = !m_origin.Equals(BOSS_DEST_ORIGIN, BOSS_DEST_EPSILON);
             if (!m_moving) {
-                m_phrase.Reset(GAME.GetPhrase(PhraseBook::PL_MEDIUM));
+                m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_MEDIUM));
 
                 m_nextMissileFireTime = GAME.GetTime();
             }
@@ -176,7 +176,7 @@ namespace typing
             GAME.MakeCharAvail(m_phrase.GetStartChar());
             --m_health;
             if (m_health > 0) {
-                m_phrase.Reset(GAME.GetPhrase(PhraseBook::PL_MEDIUM));
+                m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_MEDIUM));
             } else {
                 ExplosionPtr explosion(new Explosion(m_origin, ColourRGBA::White()));
                 GAME.AddEffect(explosion);

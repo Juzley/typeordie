@@ -1,12 +1,12 @@
 #ifndef __PHRASE_BOOK_H__
 #define __PHRASE_BOOK_H__
 
+#include <set>
 #include <vector>
 #include <string>
 #include <map>
 #include <memory>
-#include <boost/array.hpp>
-#include <boost/random.hpp>
+#include <array>
 
 namespace typing
 {
@@ -14,11 +14,18 @@ namespace typing
     {
     public:
         // Consts/Enums
-        enum PhraseLength { PL_SINGLE, PL_TINY, PL_SHORT, PL_MEDIUM, PL_LONG, PL_HUGE, PL_COUNT };
+        enum PhraseLength {
+            PL_SINGLE,
+            PL_SHORT,
+            PL_MEDIUM,
+            PL_LONG,
+            PL_COUNT };
 
         // Methods
         void               Init();
         const std::string& GetPhrase(PhraseLength length);
+        const std::string  GetComboPhrase(unsigned int words,
+                                          PhraseLength length);
         void               MakeCharAvail(char c);
         void               MakeAllCharsAvail();
 
@@ -29,18 +36,16 @@ namespace typing
     private:
         // Typedefs
         typedef std::shared_ptr<std::string>          PhrasePtr;
-        typedef std::vector<PhrasePtr>                  PhraseVector;
+        typedef std::vector<PhrasePtr>                PhraseVector;
         typedef std::shared_ptr<PhraseVector>         PhraseVectorPtr;
-        typedef boost::array<PhraseVectorPtr, PL_COUNT> PhraseArray;
+        typedef std::array<PhraseVectorPtr, PL_COUNT> PhraseArray;
         typedef std::shared_ptr<PhraseArray>          PhraseArrayPtr;
-        typedef std::map<char, PhraseArrayPtr>          PhraseMap;
+        typedef std::map<char, PhraseArrayPtr>        PhraseMap;
 
         // Consts/Enums
         static const unsigned int SINGLE_PHRASE_LENGTH = 1;
-        static const unsigned int TINY_PHRASE_LENGTH   = 5;
-        static const unsigned int SHORT_PHRASE_LENGTH  = 8;
-        static const unsigned int MEDIUM_PHRASE_LENGTH = 30;
-        static const unsigned int LONG_PHRASE_LENGTH   = 50;
+        static const unsigned int SHORT_PHRASE_LENGTH  = 6;
+        static const unsigned int MEDIUM_PHRASE_LENGTH = 12;
         static const unsigned int MAX_PHRASE_LENGTH    = 128;
         static const std::string  PHRASE_FILE;
 
@@ -50,10 +55,12 @@ namespace typing
         void            AddPhrase(const std::string& phrase);
         void            MakeCharUnavail(char c);
         char            PickAvailChar();
+        char            PickRandomChar();
 
         // Members
-        PhraseMap           m_phrases;
-        std::vector<char>   m_availChars;
+        PhraseMap       m_phrases;
+        std::set<char> m_availChars;
+        std::set<char> m_allChars; 
     };
 }
 

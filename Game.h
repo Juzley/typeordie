@@ -103,6 +103,12 @@ namespace typing
             return m_phrases.GetPhrase(len);
         }
 
+        const std::string GetComboPhrase(unsigned int             words,
+                                         PhraseBook::PhraseLength len)
+        {
+            return m_phrases.GetComboPhrase(words, len);
+        }
+
         void MakeCharAvail(char c)
         {
             m_phrases.MakeCharAvail(c);

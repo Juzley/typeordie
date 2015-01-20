@@ -275,7 +275,8 @@ namespace typing
 
         if (GAME.GetTime() - m_lastFireTime > MISSILEENEMY_FIREPAUSE)
         {
-            GAME.AddEntity(MissilePtr(new Missile(GAME.GetPhrase(PhraseBook::PL_SINGLE), m_origin)));
+            GAME.AddEntity(MissilePtr(
+                new Missile(GAME.GetPhrase(PhraseBook::PL_SINGLE), m_origin)));
             m_lastFireTime = GAME.GetTime();
         }
     }

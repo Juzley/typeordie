@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <vector>
 #include <memory>
-#include <boost/random.hpp>
 #include <math.h>
 #include "Entity.h"
 #include "Powerup.h"

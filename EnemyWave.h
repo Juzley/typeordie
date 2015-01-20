@@ -3,6 +3,7 @@
 
 #include <tuple>
 #include <memory>
+#include <algorithm>
 #include "Enemy.h"
 #include "Random.h"
 

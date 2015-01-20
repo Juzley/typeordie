@@ -1,4 +1,4 @@
-#include <boost/lexical_cast.hpp>
+#include <string>
 #include <math.h>
 #include <SDL/SDL.h>
 #include "MenuNewHighScore.h"
@@ -50,7 +50,7 @@ namespace typing
 
         y += CONGRATS_HEIGHT + SCORE_PAD;
         FONTS.Print(FONT, x, y, SCORE_HEIGHT, ColourRGBA::Yellow(), Font::ALIGN_CENTER,
-                    boost::lexical_cast<std::string>(GAME.GetScore()));
+                    std::to_string(GAME.GetScore()));
 
         y += SCORE_HEIGHT + TEXT_PAD;
         FONTS.Print(FONT, x, y, TEXT_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,

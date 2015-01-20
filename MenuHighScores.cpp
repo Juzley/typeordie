@@ -1,4 +1,4 @@
-#include <boost/lexical_cast.hpp>
+#include <string>
 #include <math.h>
 #include "MenuHighScores.h"
 #include "HighScores.h"
@@ -96,9 +96,12 @@ namespace typing
         {
             ColourRGBA col(1.0f, 1.0f, blue, 1.0f);
 
-            FONTS.Print(FONT, NAME_X, y, ENTRY_HEIGHT, col, Font::ALIGN_LEFT, (*iter)->name);
-            FONTS.Print(FONT, SCORE_X, y, ENTRY_HEIGHT, col, Font::ALIGN_LEFT, boost::lexical_cast<std::string>((*iter)->score));
-            FONTS.Print(FONT, STREAK_X, y, ENTRY_HEIGHT, col, Font::ALIGN_LEFT, boost::lexical_cast<std::string>((*iter)->streak));
+            FONTS.Print(FONT, NAME_X, y, ENTRY_HEIGHT, col, Font::ALIGN_LEFT,
+                        (*iter)->name);
+            FONTS.Print(FONT, SCORE_X, y, ENTRY_HEIGHT, col, Font::ALIGN_LEFT,
+                        std::to_string((*iter)->score));
+            FONTS.Print(FONT, STREAK_X, y, ENTRY_HEIGHT, col, Font::ALIGN_LEFT,
+                        std::to_string((*iter)->streak));
 
             y += ENTRY_HEIGHT + entryPad;
             blue += blueInc;
