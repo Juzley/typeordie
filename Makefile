@@ -1,4 +1,4 @@
-TARGET = typeordie
+TARGET = bin/typeordie
 LIBS = -lm -lSDL -lSDL_mixer -lGL -lGLU -lglut -lstdc++
 CC = gcc
 CFLAGS = -std=c++11 -Werror -Wall -Wextra

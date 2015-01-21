@@ -55,6 +55,9 @@ namespace typing
     // damaged.
     static const float DAMAGE_FLASH_TIME = 0.5f;
 
+    // The maximum streak that counts towards the score multiplier.
+    static const unsigned int MAX_COMBO = 4;
+
     const float       Game::GAME_SCREEN_TOP = 1000.0f;
     const float       Game::GAME_SCREEN_BOTTOM = -100.0f;
     const float       Game::GAME_SCREEN_LEFT = -775.0f;
@@ -739,23 +742,31 @@ namespace typing
     void Game::PhraseFinished(EntityPtr &ent)
     {
         const float  EXCELLENT_SPEED      = 0.1f;
-        const float  EXCELLENT_MULTIPLIER = 4.0f;
+        const float  EXCELLENT_MULTIPLIER = 2.0f;
         const float  GOOD_SPEED           = 0.2f;
-        const float  GOOD_MULTIPLIER      = 2.0f;
+        const float  GOOD_MULTIPLIER      = 1.4f;
         const float  OK_SPEED             = 0.3f;
+        const float  OK_MULTIPLIER        = 1.0f;
         const float  POOR_SPEED           = 0.5f;
         const float  POOR_MULTIPLIER      = 0.5f;
         const float  BAD_MULTIPLIER       = 0.25f;
         const float  AWARD_OFFSET         = -20.0f;
-
-        unsigned int score = ent->GetScore();
+        
+        // The score for the entity that has been finished is multiplied by
+        // a factor depending on the speed that the phrase was finished, and
+        // the the current streak. The streak multiplier is capped at
+        // MAX_COMBO.
+        float  multiplier = 1.0f;
 
         if (m_streakValid) {
             m_streak++;
             m_maxStreak = std::max(m_maxStreak, m_streak);
+            multiplier = std::max(1U, std::min(m_streak, MAX_COMBO));
         }
 
-        LaserPtr laser(new Laser(GetPlayerOrigin(), ent->GetOrigin(), ColourRGB::White()));
+        LaserPtr laser(new Laser(GetPlayerOrigin(),
+                                 ent->GetOrigin(),
+                                 ColourRGB::White()));
         AddEffect(laser);
         m_player.Fire();
 
@@ -766,36 +777,37 @@ namespace typing
 
             if (speed <= EXCELLENT_SPEED) {
                 type = AWARD_EXCELLENT;
-                score = static_cast<unsigned int>(static_cast<float>(score) * EXCELLENT_MULTIPLIER);
+                multiplier *= EXCELLENT_MULTIPLIER;
                 m_excellents++;
             } else if (speed <= GOOD_SPEED) {
                 type = AWARD_GOOD;
-                score = static_cast<unsigned int>(static_cast<float>(score) * GOOD_MULTIPLIER);
+                multiplier *= GOOD_MULTIPLIER;
                 m_goods++;
             } else if (speed <= OK_SPEED) {
                 type = AWARD_OK;
+                multiplier *= OK_MULTIPLIER;
                 m_oks++;
             } else if (speed <= POOR_SPEED) {
                 type = AWARD_POOR;
-                score = static_cast<unsigned int>(static_cast<float>(score) * POOR_MULTIPLIER);
+                multiplier *= POOR_MULTIPLIER;
                 m_poors++;
             } else {
                 type = AWARD_BAD;
-                score = static_cast<unsigned int>(static_cast<float>(score) * BAD_MULTIPLIER);
+                multiplier *= BAD_MULTIPLIER;
                 m_bads++;
             }
 
             // Display the award on screen.
             if (!ent->SuppressAwardDisplay()) {
-                juzutil::Vector2 screenOrg = m_camera.PerspectiveProject(ent->GetOrigin());
+                juzutil::Vector2 screenOrg = m_camera.PerspectiveProject(
+                                                            ent->GetOrigin());
                 screenOrg[1] += AWARD_OFFSET;
                 AwardPtr award(new Award(screenOrg, type, GetTime()));
                 AddEffect2d(award);
             }
         }
 
-        score   *= (m_streak == 0 ? 1 : m_streak);
-        m_score += score;
+        m_score += static_cast<float>(ent->GetScore()) * multiplier;
     }
 
 
