@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "MenuItem.h"
 
 namespace typing
@@ -31,7 +31,7 @@ namespace typing
         virtual        void                Init()               = 0;
         virtual        const std::string   NextMenu() const     = 0;
 
-        virtual        NextAction          OnType(const SDL_keysym sym);
+        virtual        NextAction          OnType(SDL_Keycode keycode);
         virtual        void                Draw();
 
         virtual NextAction Update()

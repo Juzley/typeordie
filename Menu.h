@@ -4,7 +4,7 @@
 #include <stack>
 #include <map>
 #include <string>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "MenuScreen.h"
 
 namespace typing
@@ -27,7 +27,7 @@ namespace typing
         bool Init();
         void Update();
         void Draw();
-        void OnType(const SDL_keysym sym);
+        void OnType(SDL_Keycode keycode);
         void Activate(const std::string& menuName);
 
         bool IsActive()

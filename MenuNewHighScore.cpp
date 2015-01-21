@@ -1,6 +1,6 @@
 #include <string>
 #include <math.h>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "MenuNewHighScore.h"
 #include "MenuMain.h"
 #include "FontManager.h"
@@ -78,15 +78,15 @@ namespace typing
         return MainMenu::MENU_NAME;
     }
 
-    MenuScreen::NextAction NewHighScoreMenu::OnType(const SDL_keysym sym)
+    MenuScreen::NextAction NewHighScoreMenu::OnType(SDL_Keycode keycode)
     {
-        if (sym.sym == SDLK_BACKSPACE && !m_name.empty())
+        if (keycode == SDLK_BACKSPACE && !m_name.empty())
         {
             m_name.erase(m_name.length() - 1, 1);
             return ACTION_NONE;
         }
 
-        if (sym.sym == SDLK_RETURN)
+        if (keycode == SDLK_RETURN)
         {
             if (!m_name.empty())
             {
@@ -102,7 +102,7 @@ namespace typing
 
         // If the high 9 bits of the unicode are 0, this is an ascii char
         // and we can work with it.
-        if (sym.unicode != 0 && (sym.unicode & 0xFF80) == 0) {
+        /*if (sym.unicode != 0 && (sym.unicode & 0xFF80) == 0) {
             if (m_name.length() < MAX_NAME_LENGTH)
             {
                 m_name += sym.unicode & 0x7F;
@@ -111,7 +111,7 @@ namespace typing
             {
                 SOUNDS.Play(ERROR_SOUND);
             }
-        }
+        }*/
 
         return ACTION_NONE;
     }

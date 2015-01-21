@@ -1,5 +1,5 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 #include "Utils.h"
 #include "Powerup.h"
 #include "Game.h"

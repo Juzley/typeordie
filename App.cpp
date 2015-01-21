@@ -1,7 +1,8 @@
 #include <memory>
 #include <stdexcept>
-#include <SDL/SDL_opengl.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_mixer.h>
 #include "App.h"
 #include "Game.h"
 #include "Menu.h"
@@ -32,8 +33,12 @@ namespace typing
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 
-        if (!SDL_SetVideoMode(800, 600, 32, SDL_OPENGL))
-        {
+        m_window = SDL_CreateWindow("Type Or Die!",
+                                    SDL_WINDOWPOS_UNDEFINED,
+                                    SDL_WINDOWPOS_UNDEFINED,
+                                    800, 600,
+                                    SDL_WINDOW_OPENGL);
+        if (!m_window) {
             // TODO: throw
         }
 
@@ -63,10 +68,6 @@ namespace typing
             // TODO: throw
         }
 
-        (void)SDL_EnableUNICODE(1);
-
-        SDL_WM_SetCaption("Type Or Die!", NULL);
-
         // Initialise game stuff
         SCORES.Load();
         MENU.Init();
@@ -83,15 +84,20 @@ namespace typing
             // Get the time of this frame
             m_currentTime = static_cast<float>(SDL_GetTicks()) / 1000.0f;
 
+            SDL_StartTextInput();
             while(SDL_PollEvent(&ev))
             {
                 switch(ev.type)
                 {
                 case SDL_KEYDOWN:
-                    MENU.OnType(ev.key.keysym);
+                    MENU.OnType(ev.key.keysym.sym);
+                    break;
 
+                case SDL_TEXTINPUT:
                     if (!MENU.IsActive()) {
-                        GAME.OnType(ev.key.keysym);
+                        for (char *c = ev.text.text; c != '\0'; c++) {
+                            GAME.OnType(*c);
+                        }
                     }
                     break;
 
@@ -116,7 +122,7 @@ namespace typing
             glOrtho(0.0, GetScreenWidth(), GetScreenHeight(), 0.0, 1024.0, -1024.0);
             MENU.Draw();
 
-            SDL_GL_SwapBuffers();
+            SDL_GL_SwapWindow(m_window);
 
             // Prepare for the next frame
             m_keyStateValid = false;
@@ -128,20 +134,9 @@ namespace typing
         Mix_CloseAudio();
         SDL_Quit();
     }
-
-    bool App::IsKeyDown (const SDLKey key)
-    {
-        if (!m_keyStateValid)
-        {
-            m_keyState = SDL_GetKeyState(NULL);
-            m_keyStateValid = true;
-        }
-
-        return (m_keyState[key] == 1);
-    }
 }
 
-int main ()
+int main (int argc, char *argv[])
 {
     try
     {

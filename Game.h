@@ -5,7 +5,7 @@
 #include <list>
 #include <string>
 #include <vector>
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #include "Entity.h"
 #include "Timer.h"
 #include "Player.h"
@@ -34,7 +34,7 @@ namespace typing
         void Init();
         void Update();
         void Draw();
-        void OnType(const SDL_keysym sym);
+        void OnType(char c);
         void StartNewGame();
         void Damage();
         void EndGame(float pause = 0);

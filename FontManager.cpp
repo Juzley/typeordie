@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 #include <boost/algorithm/string/find.hpp>
 #include "FontManager.h"
 #include "Exceptions.h"

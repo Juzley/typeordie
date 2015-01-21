@@ -5,8 +5,8 @@
 #include <memory>
 #include <map>
 #include <memory>
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 namespace typing
 {

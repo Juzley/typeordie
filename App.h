@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <cstdio>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 namespace typing
 {
@@ -25,7 +25,6 @@ namespace typing
         void Init();
         void Run();
         void Shutdown();
-        bool IsKeyDown(const SDLKey key);
 
         float GetTime ()
         {
@@ -72,10 +71,11 @@ namespace typing
         }
 
         // Members
-        Uint8 *m_keyState;
-        bool   m_keyStateValid;
-        float  m_currentTime;
-        bool   m_done;
+        SDL_Window *m_window;
+        Uint8      *m_keyState;
+        bool        m_keyStateValid;
+        float       m_currentTime;
+        bool        m_done;
 
         // Singleton Implementation
         static std::auto_ptr<App> m_singleton;

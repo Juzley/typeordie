@@ -3,9 +3,9 @@
 #include <random>
 #include <string>
 #include <boost/format.hpp>
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_mixer.h>
 #include "Game.h"
 #include "FontManager.h"
 #include "TextureManager.h"
@@ -24,6 +24,10 @@
 #include "Exceptions.h"
 #include "Boss.h"
 #include "Random.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 namespace typing
 {
@@ -71,7 +75,7 @@ namespace typing
     const std::string Game::ENDGAME_FONT("fonts/menufont.fnt");
     const std::string Game::MISS_SOUND("sounds/miss.wav");
     const std::string Game::TARGET_SOUND("sounds/target.wav");
-    const std::string Game::GAME_MUSIC("music/music.mp3");
+    const std::string Game::GAME_MUSIC("music/music.ogg");
 
     std::auto_ptr<Game> Game::m_singleton(new Game);
     Game& Game::GetGame ()
@@ -811,7 +815,7 @@ namespace typing
     }
 
 
-    void Game::OnType (const SDL_keysym sym)
+    void Game::OnType (char c)
     {
         using namespace std::placeholders;
 
@@ -819,13 +823,6 @@ namespace typing
 
         if (!IsActive()) {
             return;
-        }
-
-        // If the high 9 bits of the unicode are 0, this is an ascii char
-        // and we can work with it.
-        char c   = 0;
-        if (sym.unicode != 0 && (sym.unicode & 0xFF80) == 0) {
-            c = sym.unicode & 0x7F;
         }
 
         if (HasGameEnded()) {
@@ -840,12 +837,12 @@ namespace typing
                     MENU.Activate(MainMenu::MENU_NAME);
                 }
             }
-        } else if (!IsPaused() && sym.sym == SDLK_ESCAPE) {
+        /*} else if (!IsPaused() && sym.sym == SDLK_ESCAPE) {
             // Escape pressed, pause and bring up the in-game menu
             Pause(true);
-            MENU.Activate(PauseMenu::MENU_NAME);
-        } else if (IsAlive() && !HasGameEnded() && !IsPaused() &&
-                   sym.sym != SDLK_RETURN && c != 0) {
+            MENU.Activate(PauseMenu::MENU_NAME);*/
+        } else if (IsAlive() && !HasGameEnded() && !IsPaused()) { // &&
+                   //sym.sym != SDLK_RETURN && c != 0) {
             EntityPtr ent = m_targetEnt.lock();
             if (!ent) {
                 // There is no target entity, look for a entity starting

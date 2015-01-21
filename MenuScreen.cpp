@@ -11,9 +11,9 @@ namespace typing
                  std::mem_fn(&MenuItem::Draw));
     }
 
-    MenuScreen::NextAction MenuScreen::OnType(const SDL_keysym sym)
+    MenuScreen::NextAction MenuScreen::OnType(SDL_Keycode keycode)
     {
-        if (sym.sym == SDLK_RETURN)
+        if (keycode == SDLK_RETURN)
         {
             MenuItems::iterator iter = find_if(
                                         m_menuItems.begin(),
@@ -25,7 +25,7 @@ namespace typing
                 return OnMenuItemChoose((*iter)->GetID());
             }
         }
-        else if (sym.sym == SDLK_DOWN || sym.sym == SDLK_RIGHT)
+        else if (keycode == SDLK_DOWN || keycode == SDLK_RIGHT)
         {
             MenuItems::iterator iter = find_if(
                                         m_menuItems.begin(),
@@ -44,7 +44,7 @@ namespace typing
                 (*iter)->Select(true);
             }
         }
-        else if (sym.sym == SDLK_UP || sym.sym == SDLK_LEFT)
+        else if (keycode == SDLK_UP || keycode == SDLK_LEFT)
         {
             MenuItems::iterator iter = find_if(
                                         m_menuItems.begin(),

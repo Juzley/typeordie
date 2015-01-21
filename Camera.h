@@ -2,6 +2,7 @@
 #define __CAMERA_H__
 
 #include "Vector.h"
+#include <glm/glm.hpp>
 
 namespace typing
 {
@@ -31,8 +32,8 @@ namespace typing
         juzutil::Vector3 m_forward;
         juzutil::Vector3 m_right;
         juzutil::Vector3 m_up;
-        double           m_projection[16];
-        double           m_modelview[16];
+        glm::mat4        m_projection;
+        glm::mat4        m_modelview;
     };
 }
 

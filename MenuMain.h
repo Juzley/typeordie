@@ -2,7 +2,7 @@
 #define _MENU_MAIN_H_
 
 #include <string>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "MenuScreen.h"
 
 namespace typing

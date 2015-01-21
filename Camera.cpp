@@ -1,5 +1,8 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <math.h>
 #include "Camera.h"
 
@@ -31,30 +34,38 @@ namespace typing
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        gluPerspective(75.0, 800.0 / 600.0, 0.1f, 10000.0f);
+        glm::mat4 projection = glm::perspective(
+                                    75.0f, 800.0f / 600.0f, 0.1f, 10000.0f);
+        glLoadMatrixf(glm::value_ptr(projection));
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        gluLookAt(m_origin[0], m_origin[1], m_origin[2],
-                  m_lookat[0], m_lookat[1], m_lookat[2],
-                  m_up[0], m_up[1], m_up[2]);
+        glm::vec3 origin(m_origin[0], m_origin[1], m_origin[2]);
+        glm::vec3 center(m_lookat[0], m_lookat[1], m_lookat[2]);
+        glm::vec3 up(m_up[0], m_up[1], m_up[2]);
+        glm::mat4 lookat = glm::lookAt(origin, center, up);
+        glLoadMatrixf(glm::value_ptr(lookat));
 
-        glGetDoublev(GL_MODELVIEW_MATRIX, m_modelview);
-        glGetDoublev(GL_PROJECTION_MATRIX, m_projection);
+        glGetDoublev(GL_MODELVIEW_MATRIX, (GLdouble *)&m_modelview);
+        glGetDoublev(GL_PROJECTION_MATRIX, (GLdouble *)&m_projection);
     }
 
 
     const juzutil::Vector2 Camera::PerspectiveProject(const juzutil::Vector3& worldCoords) const
     {
-        double x, y, z;
         int view[4];
-
         glGetIntegerv(GL_VIEWPORT, view);
 
-        gluProject(worldCoords[0], worldCoords[1], worldCoords[2],
-            m_modelview, m_projection, view, &x, &y, &z);
+        glm::vec3 obj(worldCoords[0], worldCoords[1], worldCoords[2]);
+        glm::vec3 coords = glm::project(obj,
+                                        m_modelview,
+                                        m_projection, 
+                                        glm::vec4(view[0],
+                                                  view[1],
+                                                  view[2],
+                                                  view[3]));
     
-        return juzutil::Vector2(static_cast<float>(x), static_cast<float>(600 - y));
+        return juzutil::Vector2(coords.x, 600.0f - coords.y);
     }
 
 
