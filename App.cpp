@@ -42,6 +42,10 @@ namespace typing
             // TODO: throw
         }
 
+        if (!SDL_GL_CreateContext(m_window)) {
+            // TODO: throw
+        }
+
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClearDepth(1.0f);
 

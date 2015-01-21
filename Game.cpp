@@ -824,6 +824,7 @@ namespace typing
         if (!IsActive()) {
             return;
         }
+        return;
 
         if (HasGameEnded()) {
             // If we are dead, and we have paused for long enough,

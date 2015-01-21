@@ -1,10 +1,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+#include <math.h>
+#include "Camera.h"
+
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <math.h>
-#include "Camera.h"
 
 namespace typing
 {
@@ -46,8 +48,8 @@ namespace typing
         glm::mat4 lookat = glm::lookAt(origin, center, up);
         glLoadMatrixf(glm::value_ptr(lookat));
 
-        glGetDoublev(GL_MODELVIEW_MATRIX, (GLdouble *)&m_modelview);
-        glGetDoublev(GL_PROJECTION_MATRIX, (GLdouble *)&m_projection);
+        glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)&m_modelview);
+        glGetFloatv(GL_PROJECTION_MATRIX, (GLfloat *)&m_projection);
     }
 
 
