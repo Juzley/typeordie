@@ -31,8 +31,12 @@ namespace typing
         virtual        void                Init()               = 0;
         virtual        const std::string   NextMenu() const     = 0;
 
-        virtual        NextAction          OnType(SDL_Keycode keycode);
+        virtual        NextAction          OnKeyDown(SDL_Keycode keycode);
         virtual        void                Draw();
+
+        virtual void OnType(char c)
+        {
+        }
 
         virtual NextAction Update()
         {

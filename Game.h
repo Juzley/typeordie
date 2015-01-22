@@ -34,6 +34,7 @@ namespace typing
         void Init();
         void Update();
         void Draw();
+        void OnKeyDown(SDL_Keycode keycode);
         void OnType(char c);
         void StartNewGame();
         void Damage();

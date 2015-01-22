@@ -94,12 +94,18 @@ namespace typing
                 switch(ev.type)
                 {
                 case SDL_KEYDOWN:
-                    MENU.OnType(ev.key.keysym.sym);
+                    MENU.OnKeyDown(ev.key.keysym.sym);
+
+                    if (!MENU.IsActive()) {
+                        GAME.OnKeyDown(ev.key.keysym.sym);
+                    }
                     break;
 
                 case SDL_TEXTINPUT:
-                    if (!MENU.IsActive()) {
-                        for (char *c = ev.text.text; c != '\0'; c++) {
+                    for (char *c = ev.text.text; *c != '\0'; c++) {
+                        MENU.OnType(*c);
+
+                        if (!MENU.IsActive()) {
                             GAME.OnType(*c);
                         }
                     }

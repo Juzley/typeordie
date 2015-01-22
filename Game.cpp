@@ -815,17 +815,8 @@ namespace typing
     }
 
 
-    void Game::OnType (char c)
+    void Game::OnKeyDown (SDL_Keycode keycode)
     {
-        using namespace std::placeholders;
-
-        bool miss = false;
-
-        if (!IsActive()) {
-            return;
-        }
-        return;
-
         if (HasGameEnded()) {
             // If we are dead, and we have paused for long enough,
             // go back to the main menu on any keypress.
@@ -838,12 +829,25 @@ namespace typing
                     MENU.Activate(MainMenu::MENU_NAME);
                 }
             }
-        /*} else if (!IsPaused() && sym.sym == SDLK_ESCAPE) {
+        } else if (!IsPaused() && keycode == SDLK_ESCAPE) {
             // Escape pressed, pause and bring up the in-game menu
             Pause(true);
-            MENU.Activate(PauseMenu::MENU_NAME);*/
-        } else if (IsAlive() && !HasGameEnded() && !IsPaused()) { // &&
-                   //sym.sym != SDLK_RETURN && c != 0) {
+            MENU.Activate(PauseMenu::MENU_NAME);
+        } 
+    }
+
+
+    void Game::OnType (char c)
+    {
+        using namespace std::placeholders;
+
+        bool miss = false;
+
+        if (!IsActive()) {
+            return;
+        }
+
+        if (IsAlive() && !HasGameEnded() && !IsPaused()) {            
             EntityPtr ent = m_targetEnt.lock();
             if (!ent) {
                 // There is no target entity, look for a entity starting

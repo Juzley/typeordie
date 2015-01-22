@@ -10,7 +10,8 @@ namespace typing
     public:
         void              Init();
         void              Draw();
-        NextAction        OnType(SDL_Keycode keycode);
+        NextAction        OnKeyDown(SDL_Keycode keycode);
+        void              OnType(char c);
         const std::string NextMenu() const;
 
         static const std::string MENU_NAME;

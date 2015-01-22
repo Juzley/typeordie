@@ -27,7 +27,8 @@ namespace typing
         bool Init();
         void Update();
         void Draw();
-        void OnType(SDL_Keycode keycode);
+        void OnKeyDown(SDL_Keycode keycode);
+        void OnType(char c);
         void Activate(const std::string& menuName);
 
         bool IsActive()

@@ -78,7 +78,7 @@ namespace typing
         return MainMenu::MENU_NAME;
     }
 
-    MenuScreen::NextAction NewHighScoreMenu::OnType(SDL_Keycode keycode)
+    MenuScreen::NextAction NewHighScoreMenu::OnKeyDown(SDL_Keycode keycode)
     {
         if (keycode == SDLK_BACKSPACE && !m_name.empty())
         {
@@ -100,19 +100,15 @@ namespace typing
             }
         }
 
-        // If the high 9 bits of the unicode are 0, this is an ascii char
-        // and we can work with it.
-        /*if (sym.unicode != 0 && (sym.unicode & 0xFF80) == 0) {
-            if (m_name.length() < MAX_NAME_LENGTH)
-            {
-                m_name += sym.unicode & 0x7F;
-            }
-            else
-            {
-                SOUNDS.Play(ERROR_SOUND);
-            }
-        }*/
-
         return ACTION_NONE;
+    }
+
+    void NewHighScoreMenu::OnType(char c)
+    {
+        if (m_name.length() < MAX_NAME_LENGTH) {
+            m_name += c;
+        } else {
+            SOUNDS.Play(ERROR_SOUND);
+        }
     }
 }

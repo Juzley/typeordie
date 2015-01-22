@@ -72,17 +72,24 @@ namespace typing
         }
     }
 
-    void Menu::OnType(SDL_Keycode keycode)
+    void Menu::OnKeyDown(SDL_Keycode keycode)
     {
-        if (IsActive())
-        {
+        if (IsActive()) {
             MenuScreenPtr&          menu = m_menuStack.top();
-            MenuScreen::NextAction  act  = menu->OnType(keycode);
+            MenuScreen::NextAction  act  = menu->OnKeyDown(keycode);
 
             HandleAction(act);
         }
     }
 
+
+    void Menu::OnType(char c)
+    {
+        if (IsActive()) {
+            MenuScreenPtr& menu = m_menuStack.top();
+            menu->OnType(c);
+        }
+    }
 
     void Menu::HandleAction(MenuScreen::NextAction act)
     {

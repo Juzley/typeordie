@@ -11,7 +11,7 @@ namespace typing
                  std::mem_fn(&MenuItem::Draw));
     }
 
-    MenuScreen::NextAction MenuScreen::OnType(SDL_Keycode keycode)
+    MenuScreen::NextAction MenuScreen::OnKeyDown(SDL_Keycode keycode)
     {
         if (keycode == SDLK_RETURN)
         {
