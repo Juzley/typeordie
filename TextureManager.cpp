@@ -75,7 +75,14 @@ namespace typing
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data.get());
+
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, bpp == 32 ? 2 : 1);
+        glTexImage2D(GL_TEXTURE_2D, 0,
+                     bpp == 32 ? GL_RGBA8 : GL_RGB8,
+                     width, height, 0,
+                     bpp == 32 ? GL_BGRA : GL_BGR,
+                     GL_UNSIGNED_BYTE, data.get());
     }
 
     void Texture::Bind() const
