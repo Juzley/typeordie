@@ -30,9 +30,6 @@ namespace typing
         }
 
         // Initialise video
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-
         m_window = SDL_CreateWindow("Type Or Die!",
                                     SDL_WINDOWPOS_UNDEFINED,
                                     SDL_WINDOWPOS_UNDEFINED,
@@ -45,6 +42,9 @@ namespace typing
         if (!SDL_GL_CreateContext(m_window)) {
             // TODO: throw
         }
+
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClearDepth(1.0f);
