@@ -121,7 +121,7 @@ namespace typing
         m_waveCreator.AddWave<BombEnemyWave>(2);
         m_waveCreator.AddWave<SeekerEnemyWave>(3);
 
-        // TODO: Sort this
+        m_bossWaveCreator.AddWave<KnockbackBossEnemyWave>();
         m_bossWaveCreator.AddWave<MissileBossEnemyWave>();
         m_bossWaveCreator.AddWave<ChargeBossEnemyWave>();
 
