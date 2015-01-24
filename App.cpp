@@ -1,5 +1,6 @@
 #include <memory>
 #include <stdexcept>
+#include <boost/program_options.hpp>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_mixer.h>
@@ -12,14 +13,34 @@ namespace typing
 {
     const unsigned int App::MAJOR_VERSION  = 1;
     const unsigned int App::MINOR_VERSION  = 0;
-    const float App::SCREEN_WIDTH          = 800.0f;
-    const float App::SCREEN_HEIGHT         = 600.0f;
 
     std::auto_ptr<App> App::m_singleton(new App());
     App& App::GetApp ()
     {
         return *(m_singleton.get());
     }
+
+    void App::ParseOptions (int argc, char *argv[])
+    {
+        namespace po = boost::program_options;
+
+        po::options_description desc("Allowed options");
+        desc.add_options()
+            ("width,w",
+                po::value<int>()->default_value(800), "set resolution width")
+            ("height,h",
+                po::value<int>()->default_value(600), "set resolution height")
+            ("fullscreen,f",
+                po::bool_switch(), "use full-screen")
+            ("text-scale,t",
+                po::value<double>()->default_value(1.0),
+                "set in-game text scale")
+        ;
+
+        po::store(po::parse_command_line(argc, argv, desc), m_options);
+        po::notify(m_options);
+    }
+
 
     void App::Init ()
     {
@@ -33,8 +54,13 @@ namespace typing
         m_window = SDL_CreateWindow("Type Or Die!",
                                     SDL_WINDOWPOS_UNDEFINED,
                                     SDL_WINDOWPOS_UNDEFINED,
-                                    800, 600,
-                                    SDL_WINDOW_OPENGL);
+                                    GetOption<int>("width"),
+                                    GetOption<int>("height"),
+                                    SDL_WINDOW_OPENGL |
+                                    GetOption<bool>("fullscreen") ?
+                                        (SDL_WINDOW_OPENGL |
+                                         SDL_WINDOW_FULLSCREEN) :
+                                        SDL_WINDOW_OPENGL);
         if (!m_window) {
             // TODO: throw
         }
@@ -120,7 +146,8 @@ namespace typing
             GAME.Update();
             MENU.Update();
 
-            glClear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+            glClear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |
+                    GL_COLOR_BUFFER_BIT);
 
             GAME.Draw();
 
@@ -129,7 +156,8 @@ namespace typing
             glLoadIdentity();
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            glOrtho(0.0, GetScreenWidth(), GetScreenHeight(), 0.0, 1024.0, -1024.0);
+            glOrtho(0.0, GetScreenWidth(), GetScreenHeight(), 0.0,
+                    1024.0, -1024.0);
             MENU.Draw();
 
             SDL_GL_SwapWindow(m_window);
@@ -148,14 +176,15 @@ namespace typing
 
 int main (int argc, char *argv[])
 {
-    try
-    {
+    try {
+        typing::APP.ParseOptions(argc, argv);
         typing::APP.Init();
         typing::APP.Run();
-    }
-    catch (std::exception &e)
-    {
-        fprintf(stderr, "%s", e.what());
+    } catch (std::exception &e) {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                                 "Exception Caught",
+                                 e.what(),
+                                 NULL);
     }
 
     typing::APP.Shutdown();

@@ -2,6 +2,7 @@
 #include <SDL2/SDL_opengl.h>
 #include <math.h>
 #include "Camera.h"
+#include "App.h"
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -37,7 +38,10 @@ namespace typing
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glm::mat4 projection = glm::perspective(
-                                1.30899694f, 800.0f / 600.0f, 0.1f, 10000.0f);
+                                1.30899694f, 
+                                static_cast<float>(APP.GetScreenWidth()) /
+                                static_cast<float>(APP.GetScreenHeight()),
+                                0.1f, 10000.0f);
         glLoadMatrixf(glm::value_ptr(projection));
 
         glMatrixMode(GL_MODELVIEW);
@@ -67,7 +71,8 @@ namespace typing
                                                   view[2],
                                                   view[3]));
     
-        return juzutil::Vector2(coords.x, 600.0f - coords.y);
+        return juzutil::Vector2(
+            coords.x, static_cast<float>(APP.GetScreenHeight()) - coords.y);
     }
 
 
@@ -75,8 +80,8 @@ namespace typing
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        // TODO: Get rid of magic numbers
-        glOrtho(0, 800, 600, 0, -1.0f, 1.0f);
+        glOrtho(0, APP.GetScreenWidth(), APP.GetScreenHeight(),
+                0, -1.0f, 1.0f);
 
         glMatrixMode(GL_MODELVIEW_MATRIX);
     }

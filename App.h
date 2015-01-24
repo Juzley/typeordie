@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <cstdio>
+#include <boost/program_options.hpp>
 #include <SDL2/SDL.h>
 
 namespace typing
@@ -16,8 +17,6 @@ namespace typing
         // Consts/Enums
         static const unsigned int MAJOR_VERSION;
         static const unsigned int MINOR_VERSION;
-        static const float        SCREEN_WIDTH;
-        static const float        SCREEN_HEIGHT;
 
         enum LogLevel { LOG_ERROR, LOG_DEBUG };
 
@@ -25,20 +24,26 @@ namespace typing
         void Init();
         void Run();
         void Shutdown();
+        void ParseOptions(int argc, char *argv[]);
 
         float GetTime ()
         {
             return m_currentTime;
         }
 
-        float GetScreenWidth()
+        template <typename T> T GetOption(const char* option)
         {
-            return SCREEN_WIDTH;
+            return m_options[option].as<T>();
         }
 
-        float GetScreenHeight()
+        int GetScreenWidth()
         {
-            return SCREEN_HEIGHT;
+            return GetOption<int>("width");
+        }
+
+        int GetScreenHeight()
+        {
+            return GetOption<int>("height");
         }
 
         void Quit()
@@ -63,7 +68,6 @@ namespace typing
         }
 
     private:
-
         // Ctors/Dtors
         App() :
            m_keyState(NULL), m_keyStateValid(false), m_currentTime(0)
@@ -71,11 +75,12 @@ namespace typing
         }
 
         // Members
-        SDL_Window *m_window;
-        Uint8      *m_keyState;
-        bool        m_keyStateValid;
-        float       m_currentTime;
-        bool        m_done;
+        SDL_Window                            *m_window;
+        Uint8                                 *m_keyState;
+        bool                                   m_keyStateValid;
+        float                                  m_currentTime;
+        bool                                   m_done;
+        boost::program_options::variables_map  m_options;
 
         // Singleton Implementation
         static std::auto_ptr<App> m_singleton;

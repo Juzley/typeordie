@@ -69,8 +69,6 @@ namespace typing
     const float       Game::FINAL_DEATH_PAUSE = 2.0f;
     const float       Game::MIN_POWERUP_SPAWN_TIME = 30.0f;
     const float       Game::MAX_POWERUP_SPAWN_TIME = 180.0f;
-    const float       Game::ORTHO_WIDTH       = 800.0f;
-    const float       Game::ORTHO_HEIGHT      = 600.0f;
     const std::string Game::HUD_FONT("fonts/hudfont.fnt");
     const std::string Game::ENDGAME_FONT("fonts/menufont.fnt");
     const std::string Game::MISS_SOUND("sounds/miss.wav");
@@ -355,6 +353,8 @@ namespace typing
 
     void Game::DrawHud()
     {
+        const float ORTHO_WIDTH = APP.GetScreenWidth();
+        const float ORTHO_HEIGHT = APP.GetScreenHeight();
         const float HUD_SIZE                 = 48.0f;
         const float HUD_TEXT_HEIGHT          = 16.0f;
         const float HUD_NUMBER_HEIGHT        = 32.0f;
@@ -651,6 +651,8 @@ namespace typing
 
     void Game::DrawEndScreen()
     {
+        const float ORTHO_WIDTH = APP.GetScreenWidth();
+        const float ORTHO_HEIGHT = APP.GetScreenHeight();
         const float GAME_OVER_HEIGHT = 64.0f;
         const float SCORE_HEIGHT = 48.0f;
         const float ITEM_SPACING = 8.0f;
@@ -721,7 +723,10 @@ namespace typing
             // being drawn.
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            glOrtho(0.0, ORTHO_WIDTH, ORTHO_HEIGHT, 0.0, -1, 1);
+            glOrtho(0.0,
+                    APP.GetScreenWidth(),
+                    APP.GetScreenHeight(),
+                    0.0, -1, 1);
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
 

@@ -30,7 +30,6 @@ namespace typing
         static const float       ITEM_HEIGHT;
         static const float       ITEM_SPACING;
         static const float       TITLE_HEIGHT;
-        static const float       TITLE_STARTY;
         enum PauseMenuItems { MENUITEM_YES, MENUITEM_NO, MENUITEM_COUNT };
 
         // Members
@@ -59,7 +58,6 @@ namespace typing
         static const std::string BACKGROUND;
         static const float       ITEM_HEIGHT;
         static const float       ITEM_SPACING;
-        static const float       ITEM_STARTY;
         enum MainMenuItems { MENUITEM_START, MENUITEM_SCORES, MENUITEM_QUIT, MENUITEM_COUNT };
 
         // Members

@@ -19,10 +19,12 @@ namespace typing
     const float       QuitConfirmMenu::ITEM_HEIGHT  = 48.0f;
     const float       QuitConfirmMenu::ITEM_SPACING = 2.0f;
     const float       QuitConfirmMenu::TITLE_HEIGHT = 48.0f;
-    const float       QuitConfirmMenu::TITLE_STARTY = 490.0f;
 
     void QuitConfirmMenu::Init()
     {
+        const float TITLE_STARTY =
+            APP.GetScreenHeight() - 2.0f * TITLE_HEIGHT - 7.0f * ITEM_SPACING;
+
         TEXTURES.Add(BACKGROUND);
         FONTS.Add(FONT);
         MenuItem::Init();
@@ -32,15 +34,22 @@ namespace typing
         m_titleOrigin.Set(APP.GetScreenWidth() / 2.0f, TITLE_STARTY);
 
         float y = TITLE_STARTY + ITEM_SPACING + TITLE_HEIGHT;
-        float x = 350.0f;
-        AddMenuItem(MenuItemPtr(new MenuItem(juzutil::Vector2(x, y), "Yes",  MENUITEM_YES,  ITEM_HEIGHT, true)));
+        float x = static_cast<float>(APP.GetScreenWidth()) / 2.0f - 50.0f;
+        AddMenuItem(MenuItemPtr(
+            new MenuItem(juzutil::Vector2(x, y), "Yes", 
+                         MENUITEM_YES, ITEM_HEIGHT, true)));
         x += 100.0f;
 
-        AddMenuItem(MenuItemPtr(new MenuItem(juzutil::Vector2(x, y), "No",   MENUITEM_NO,   ITEM_HEIGHT, false)));
+        AddMenuItem(MenuItemPtr(
+            new MenuItem(juzutil::Vector2(x, y), "No",
+                         MENUITEM_NO, ITEM_HEIGHT, false)));
     }
 
     void QuitConfirmMenu::Draw()
     {
+        const float TITLE_STARTY =
+            APP.GetScreenHeight() - 2.0f * TITLE_HEIGHT - 7.0f * ITEM_SPACING;
+
         DrawTexturedRect(BACKGROUND, 0.0f, 0.0f, APP.GetScreenWidth(), APP.GetScreenHeight());
 
         DrawRect(ColourRGBA(0.0f, 0.0f, 0.0f, 0.5f), 0.0f, TITLE_STARTY - ITEM_SPACING,
@@ -83,7 +92,6 @@ namespace typing
     const std::string MainMenu::BACKGROUND("textures/menu/background.tga");
     const float       MainMenu::ITEM_HEIGHT  = 32.0f;
     const float       MainMenu::ITEM_SPACING = 2.0f;
-    const float       MainMenu::ITEM_STARTY  = 490.0f;
 
     void MainMenu::Init()
     {
@@ -94,7 +102,8 @@ namespace typing
 
         // Add menu items
         float x = APP.GetScreenWidth() / 2.0f;
-        float y = ITEM_STARTY;
+        float y =
+            APP.GetScreenHeight() - 3.0f * ITEM_HEIGHT - 7.0f * ITEM_SPACING;
 
         AddMenuItem(MenuItemPtr(new MenuItem(juzutil::Vector2(x, y), "Start Game",  MENUITEM_START,  ITEM_HEIGHT, true)));
         y += ITEM_HEIGHT + ITEM_SPACING;
@@ -107,11 +116,14 @@ namespace typing
 
     void MainMenu::Draw()
     {
+        const float y =
+            APP.GetScreenHeight() - 3.0f * ITEM_HEIGHT - 7.0f * ITEM_SPACING;
+
         DrawTexturedRect(BACKGROUND, 0.0f, 0.0f, APP.GetScreenWidth(),
                         APP.GetScreenHeight());
 
-        DrawRect(ColourRGBA(0.0f, 0.0f, 0.0f, 0.5f), 0.0f, ITEM_STARTY - ITEM_SPACING,
-            APP.GetScreenWidth(), APP.GetScreenHeight() - ITEM_STARTY + ITEM_SPACING);
+        DrawRect(ColourRGBA(0.0f, 0.0f, 0.0f, 0.5f), 0.0f, y - ITEM_SPACING,
+            APP.GetScreenWidth(), APP.GetScreenHeight() - y + ITEM_SPACING);
 
         // Draw the version number
         FONTS.Print(VERSION_FONT, APP.GetScreenWidth(), APP.GetScreenHeight() - 12.0f, 12.0f, ColourRGBA::White(), Font::ALIGN_RIGHT,

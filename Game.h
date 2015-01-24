@@ -146,8 +146,6 @@ namespace typing
         static const float        FINAL_DEATH_PAUSE;
         static const float        MIN_POWERUP_SPAWN_TIME;
         static const float        MAX_POWERUP_SPAWN_TIME;
-        static const float        ORTHO_WIDTH;
-        static const float        ORTHO_HEIGHT;
         static const std::string  HUD_FONT;
         static const std::string  ENDGAME_FONT;
         static const std::string  MISS_SOUND;
