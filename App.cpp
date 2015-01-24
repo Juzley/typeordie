@@ -33,7 +33,7 @@ namespace typing
             ("fullscreen,f",
                 po::bool_switch(), "use full-screen")
             ("text-scale,t",
-                po::value<double>()->default_value(1.0),
+                po::value<float>()->default_value(1.0f),
                 "set in-game text scale")
         ;
 
@@ -45,8 +45,7 @@ namespace typing
     void App::Init ()
     {
         // Initialise SDL
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
-        {
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
             // TODO: throw
         }
 
@@ -56,7 +55,6 @@ namespace typing
                                     SDL_WINDOWPOS_UNDEFINED,
                                     GetOption<int>("width"),
                                     GetOption<int>("height"),
-                                    SDL_WINDOW_OPENGL |
                                     GetOption<bool>("fullscreen") ?
                                         (SDL_WINDOW_OPENGL |
                                          SDL_WINDOW_FULLSCREEN) :

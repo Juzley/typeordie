@@ -16,12 +16,13 @@ namespace typing
     const float            BOSS_DEST_EPSILON = 5.0f;
     const float            BOSS_ENTRY_SPEED = 100.0f;
 
+
     /*************************************************************************
      * Knockback Boss                                                        *
      *************************************************************************/
 
-    const float KNOCKBACKBOSS_ADVANCE_SPEED = 120.0f; 
-    const float KNOCKBACKBOSS_KNOCKBACK_DISTANCE = 200.0f;
+    const float KNOCKBACKBOSS_ADVANCE_SPEED = 110.0f; 
+    const float KNOCKBACKBOSS_KNOCKBACK_DISTANCE = 250.0f;
     const unsigned int KNOCKBACKBOSS_WORD_COUNT = 2;
     const enum PhraseBook::PhraseLength KNOCKBACKBOSS_PHRASE_LENGTH =
                                                         PhraseBook::PL_SHORT;
@@ -124,7 +125,7 @@ namespace typing
 
     // Charge time is calculated as base + scale * health, so the charge gets
     // quicker as the boss gets closer to death.
-    const float ChargeBoss::CHARGEBOSS_BASE_CHARGE_TIME  = 2.0f;
+    const float ChargeBoss::CHARGEBOSS_BASE_CHARGE_TIME  = 5.0f;
     const float ChargeBoss::CHARGEBOSS_CHARGE_TIME_SCALE = 0.5f;
 
     void ChargeBoss::OnSpawn()

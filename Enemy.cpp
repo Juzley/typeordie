@@ -89,6 +89,7 @@ namespace typing
     const ColourRGBA  AccelEnemy::ACCELENEMY_COLOUR(0.1f, 0.1f, 0.1f, 0.4f);
     const ColourRGBA  AccelEnemy::ACCELENEMY_OUTLINECOLOUR(0.8f, 0.8f, 0.8f, 1.0f);
     const float       AccelEnemy::ACCELENEMY_ACCEL = 2.0f;
+    const float       ACCELENEMY_MAX_SPEED = 600.0f;
 
     void AccelEnemy::Draw2D()
     {
@@ -134,7 +135,9 @@ namespace typing
         *phraseFinished = m_phrase.Finished();
 
         if (!*hit) {
-            m_speed *= ACCELENEMY_ACCEL;
+            if (m_speed < ACCELENEMY_MAX_SPEED) {
+                m_speed *= ACCELENEMY_ACCEL;
+            }
         }
 
         if (*phraseFinished) {

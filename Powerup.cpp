@@ -11,9 +11,9 @@
 
 namespace typing
 {
-    static const float      POWERUP_LIFETIME = 4.0f;
-    static const float      POWERUP_BLINK_TIME = 1.0f;
-    static const float      POWERUP_BLINK_SPEED = 8.0f;
+    static const float      POWERUP_LIFETIME = 6.0f;
+    static const float      POWERUP_BLINK_TIME = 2.0f;
+    static const float      POWERUP_BLINK_SPEED = 4.0f;
     static const ColourRGBA POWERUP_SPHERE_COLOUR(1.0f, 1.0f, 1.0f, 0.3f);
 
     //////////////////////////////////////////////////////////////////////////
@@ -67,10 +67,13 @@ namespace typing
     void ExtraLife::Draw3D()
     {
         ColourRGBA sphereColour(POWERUP_SPHERE_COLOUR);
-        const float blinkTime = (GAME.GetTime() - m_spawnTime) - (POWERUP_LIFETIME - POWERUP_BLINK_TIME);
+        const float blinkTime = (GAME.GetTime() - m_spawnTime) -
+                                    (POWERUP_LIFETIME - POWERUP_BLINK_TIME);
         if (blinkTime > 0.0f) {
-            sphereColour[ColourRGBA::COLOUR_ALPHA] = POWERUP_SPHERE_COLOUR.GetAlpha() *
-                abs(cosf((blinkTime / POWERUP_BLINK_TIME) * static_cast<float>(M_PI) * POWERUP_BLINK_SPEED));
+            sphereColour[ColourRGBA::COLOUR_ALPHA] =
+                POWERUP_SPHERE_COLOUR.GetAlpha() *
+                    fabs(cosf((blinkTime / POWERUP_BLINK_TIME) *
+                              static_cast<float>(M_PI) * POWERUP_BLINK_SPEED));
         }
 
         glPushMatrix();

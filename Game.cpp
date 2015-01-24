@@ -767,7 +767,8 @@ namespace typing
         // MAX_COMBO.
         float  multiplier = 1.0f;
 
-        if (m_streakValid) {
+        // Single phrases don't increase the streak.
+        if (m_streakValid && !ent->IsPhraseSingle()) {
             m_streak++;
             m_maxStreak = std::max(m_maxStreak, m_streak);
             multiplier = std::max(1U, std::min(m_streak, MAX_COMBO));
