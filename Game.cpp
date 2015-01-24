@@ -49,11 +49,10 @@ namespace typing
 
     // The length of time to wait for the next wave if the player kills all
     // active waves.
-    static const float WAVES_CLEARED_PAUSE = 0.5f; 
+    static const float WAVES_CLEARED_PAUSE = 1.0f;
 
-    // The length of time to pause on reaching the end of the level before
-    // the boss appears.
-    static const float BOSS_WAVE_WAIT_TIME = 5.0f;
+    // The length of time to display the boss warning sign.
+    static const float BOSS_WAVE_WARNING_TIME = 5.0f;
 
     // The length of time the flash appears on the screen when the player is
     // damaged.
@@ -203,8 +202,10 @@ namespace typing
         }
 
         // Check if we should start a boss wave.
-        if (m_bossWavePending && m_activeWaves.size() == 0 &&
-            GetTime() >= m_bossWaveStartTime) {
+        if (m_bossWavePending && !m_bossWaveActive &&
+            m_activeWaves.size() == 0) {
+            m_bossWaveStartTime = GetTime();
+
             EnemyWavePtr wave = m_bossWaveCreator.CreateWave();
             wave->Start();
             m_activeWaves.push_back(wave);
@@ -214,12 +215,6 @@ namespace typing
             APP.Log(App::LOG_DEBUG,
                     boost::str(boost::format(
                         "%1%: Spawned boss wave.") % GetTime()));
-        }
-
-        // If we're waiting for a boss and there are still active waves, push
-        // the boss spawn time back.
-        if (m_bossWavePending && m_activeWaves.size() > 0) {
-            m_bossWaveStartTime = GetTime() + BOSS_WAVE_WAIT_TIME;
         }
 
         // Spawn enemies from any active waves, remove any finished waves.
@@ -334,12 +329,10 @@ namespace typing
             }
         }
 
-        if (!m_bossWavePending && !m_bossWaveActive &&
-            GetTime() > m_nextLevelTime) {
+        if (!m_bossWaveActive && GetTime() > m_nextLevelTime) {
             // Ready to go up to the next level, but need to spawn a boss
             // first.
             m_bossWavePending = true;
-            m_bossWaveStartTime = GetTime() + BOSS_WAVE_WAIT_TIME;
         }
 
         SpawnEnemies();
@@ -451,18 +444,20 @@ namespace typing
                     HUD_NUMBER_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
                     std::to_string(m_streak));
 
-        if (m_bossWavePending && m_activeWaves.size() == 0) {
-            const float bossPendingTime = m_bossWaveStartTime - GetTime();
+        if (m_bossWaveActive &&
+            (GetTime() - m_bossWaveStartTime) < BOSS_WAVE_WARNING_TIME) {
+            const float bossWarningTime = GetTime() - m_bossWaveStartTime;
             const float warningAlpha =
-                            fabs(sinf(static_cast<float>(M_PI) *
-                                     (bossPendingTime / BOSS_WAVE_WAIT_TIME) *
-                                     HUD_WARNING_BLINK_SPEED));
+                        fabs(sinf(static_cast<float>(M_PI) *
+                                 (bossWarningTime / BOSS_WAVE_WARNING_TIME) *
+                                 HUD_WARNING_BLINK_SPEED));
             ColourRGBA warningColour(ColourRGB::Red(), warningAlpha);
 
             FONTS.Print(HUD_FONT, ORTHO_WIDTH / 2.0f, 0, HUD_WARNING_HEIGHT,
                 warningColour, Font::ALIGN_CENTER, "WARNING");
-            FONTS.Print(HUD_FONT, ORTHO_WIDTH / 2.0f, HUD_WARNING_HEIGHT, HUD_BOSS_APPROACH_HEIGHT,
-                warningColour, Font::ALIGN_CENTER, "BOSS APPROACHING");
+            FONTS.Print(HUD_FONT, ORTHO_WIDTH / 2.0f, HUD_WARNING_HEIGHT,
+                        HUD_BOSS_APPROACH_HEIGHT,
+                        warningColour, Font::ALIGN_CENTER, "BOSS APPROACHING");
         }
     }
 
