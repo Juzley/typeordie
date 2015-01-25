@@ -1,3 +1,4 @@
+#include <cmath>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include "Utils.h"
@@ -8,13 +9,15 @@
 #include "Shape.h"
 #include "Random.h"
 #include "Award.h"
+#include "Utils.h"
 
 namespace typing
 {
     static const float      POWERUP_LIFETIME = 6.0f;
+    static const float      POWERUP_ROTATE_SPEED = 0.5f;
     static const float      POWERUP_BLINK_TIME = 2.0f;
     static const float      POWERUP_BLINK_SPEED = 4.0f;
-    static const ColourRGBA POWERUP_SPHERE_COLOUR(1.0f, 1.0f, 1.0f, 0.3f);
+    static const ColourRGBA POWERUP_SPHERE_COLOUR(1.0f, 1.0f, 1.0f, 0.1f);
 
     //////////////////////////////////////////////////////////////////////////
     // PowerupFactory
@@ -43,6 +46,9 @@ namespace typing
 
 
         if (!*hit) {
+            ExplosionPtr explosion(new Explosion(m_origin,
+                                                 ColourRGBA::Red()));
+            GAME.AddEffect(explosion);
             GAME.MakeCharAvail(m_phrase.GetStartChar());
             m_unlink = true;
         } else {
@@ -53,7 +59,10 @@ namespace typing
                 GAME.AddExtraLife();
                 // TODO: Offset award display
                 GAME.AddEffect2d(
-                    AwardPtr(new Award(GAME.GetCam().PerspectiveProject(m_origin), AWARD_EXTRALIFE, GAME.GetTime())));
+                    AwardPtr(new Award(
+                                GAME.GetCam().PerspectiveProject(m_origin),
+                                AWARD_EXTRALIFE,
+                                GAME.GetTime())));
                 m_unlink = true;
             }
         }
@@ -78,8 +87,27 @@ namespace typing
 
         glPushMatrix();
             glTranslatef(m_origin[0], m_origin[1], m_origin[2]);
-            glScalef(20.0f, 20.0f, 20.0f);
-            DrawSphere(ColourRGBA(sphereColour));
+
+            glPushMatrix();
+                float angle =
+                    RadToDeg(acosf(fmod(POWERUP_ROTATE_SPEED * 
+                                        GAME.GetTime(), 2.0f) - 1.0f));
+                glRotatef(angle, 0.0f, 1.0f, 0.0f);
+
+                glPushMatrix();
+                    glScalef(7.0f, 18.0f, 7.0f);
+                    DrawCube(ColourRGBA::Red());
+                glPopMatrix();
+                glPushMatrix();
+                    glScalef(18.0f, 7.0f, 7.0f);
+                    DrawCube(ColourRGBA::Red());
+                glPopMatrix();
+            glPopMatrix();
+
+            glPushMatrix();
+                glScalef(20.0f, 20.0f, 20.0f);
+                DrawSphere(ColourRGBA(sphereColour));
+            glPopMatrix();
         glPopMatrix();
     }
 

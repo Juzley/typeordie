@@ -9,6 +9,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 class ColourRGBA;
 
 namespace typing
@@ -42,6 +46,16 @@ namespace typing
 	{
 		return (max - (max - min ) * ratio);
 	}
+
+    static inline float DegToRad(float deg)
+    {
+        return (deg * M_PI / 180.0f);
+    }
+
+    static inline float RadToDeg(float rad)
+    {
+        return (rad * 180.0f / M_PI);
+    }
 }
 
 #endif // __UTILS_H__

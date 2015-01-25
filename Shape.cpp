@@ -3,6 +3,7 @@
 #include <SDL2/SDL_opengl.h>
 #include "Shape.h"
 #include "Vector.h"
+#include "Utils.h"
 
 namespace typing
 {
