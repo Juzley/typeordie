@@ -10,9 +10,32 @@
 #include "Powerup.h"
 #include "Vector.h"
 #include "Phrase.h"
+#include "Effect.h"
+#include "Colour.h"
 
 namespace typing
 {
+    class PowerupActivateEffect : public Effect
+    {
+    public:
+        PowerupActivateEffect(const juzutil::Vector3& origin)
+            : m_origin(origin)
+        {
+        }
+
+        static void Init();
+
+        void Draw();
+        void Update();
+        void OnSpawn();
+        bool Unlink();
+
+        private:
+            juzutil::Vector3 m_origin;
+            float            m_age;
+    };
+    typedef std::shared_ptr<PowerupActivateEffect> PowerupActivateEffectPtr;
+
     //////////////////////////////////////////////////////////////////////////
     // Powerup
     //////////////////////////////////////////////////////////////////////////

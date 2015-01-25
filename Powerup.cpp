@@ -20,6 +20,75 @@ namespace typing
     static const ColourRGBA POWERUP_SPHERE_COLOUR(1.0f, 1.0f, 1.0f, 0.1f);
 
     //////////////////////////////////////////////////////////////////////////
+    // PowerupActivateEffect
+    //////////////////////////////////////////////////////////////////////////
+
+    static const std::string POWERUPACTIVATEEFFECT_SOUND(
+                                                 "sounds/explosion.wav");
+    static const std::string POWERUPACTIVATEEFFECT_FLARE_TEXTURE(
+                                                 "textures/game/flare.tga");
+    static const float POWERUPACTIVATEEFFECT_LIFETIME = 0.4f; 
+    static const float POWERUPACTIVATEEFFECT_FLARE_START_SIZE = 10.0f;
+    static const float POWERUPACTIVATEEFFECT_FLARE_EXPAND_SPEED = 1500.0f;
+    static const float POWERUPACTIVATEEFFECT_FLARE_START_ALPHA = 1.0f;
+    static const float POWERUPACTIVATEEFFECT_FLARE_ALPHA_FADE = 6.0f;
+
+    void PowerupActivateEffect::Init()
+    {
+        SOUNDS.Add(POWERUPACTIVATEEFFECT_SOUND);
+        TEXTURES.Add(POWERUPACTIVATEEFFECT_FLARE_TEXTURE);
+    }
+
+    void PowerupActivateEffect::OnSpawn()
+    {
+        SOUNDS.Play(POWERUPACTIVATEEFFECT_SOUND);
+    }
+
+    void PowerupActivateEffect::Update()
+    {
+        m_age += GAME.GetFrameTime();
+    }
+
+    bool PowerupActivateEffect::Unlink()
+    {
+        return m_age >= POWERUPACTIVATEEFFECT_LIFETIME;
+    }
+
+    void PowerupActivateEffect::Draw()
+    {
+        const float flareSize = POWERUPACTIVATEEFFECT_FLARE_START_SIZE +
+            m_age * POWERUPACTIVATEEFFECT_FLARE_EXPAND_SPEED;
+        const float flareAlpha = POWERUPACTIVATEEFFECT_FLARE_START_ALPHA -
+            m_age * POWERUPACTIVATEEFFECT_FLARE_ALPHA_FADE;
+
+        glPushMatrix();
+            glTranslatef(m_origin[0], m_origin[1], m_origin[2]);
+            glScalef(flareSize, flareSize, flareSize);
+            TEXTURES.Bind(POWERUPACTIVATEEFFECT_FLARE_TEXTURE);
+            glColor4f(0.6f, 1.0f, 0.6f, flareAlpha);
+
+            glBegin(GL_QUADS);
+                juzutil::Vector3 vertex =
+                    (-GAME.GetCam().GetRight() - GAME.GetCam().GetUp()) / 2.0f;
+                glTexCoord2f(0.0f, 0.0f);
+                glVertex3f(vertex[0], vertex[1], vertex[2]);
+
+                vertex += GAME.GetCam().GetRight();
+                glTexCoord2f(0.0f, 1.0f);
+                glVertex3f(vertex[0], vertex[1], vertex[2]);
+
+                vertex += GAME.GetCam().GetUp();
+                glTexCoord2f(1.0f, 1.0f);
+                glVertex3f(vertex[0], vertex[1], vertex[2]);
+
+                vertex -= GAME.GetCam().GetRight();
+                glTexCoord2f(1.0f, 0.0f);
+                glVertex3f(vertex[0], vertex[1], vertex[2]);
+            glEnd();
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////
     // PowerupFactory
     //////////////////////////////////////////////////////////////////////////
 
@@ -62,6 +131,11 @@ namespace typing
                                 GAME.GetCam().PerspectiveProject(m_origin),
                                 AWARD_EXTRALIFE,
                                 GAME.GetTime())));
+
+                PowerupActivateEffectPtr activate(
+                                        new PowerupActivateEffect(m_origin));
+                GAME.AddEffect(activate);
+
                 m_unlink = true;
             }
         }
@@ -147,6 +221,11 @@ namespace typing
                                 GAME.GetCam().PerspectiveProject(m_origin),
                                 AWARD_SHORTEN_PHRASES,
                                 GAME.GetTime())));
+
+                PowerupActivateEffectPtr activate(
+                                    new PowerupActivateEffect(m_origin));
+                GAME.AddEffect(activate);
+
                 m_unlink = true;
             }
         }

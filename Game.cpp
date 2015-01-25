@@ -70,8 +70,8 @@ namespace typing
     const float       Game::GAME_SCREEN_LEFT = -775.0f;
     const float       Game::GAME_SCREEN_RIGHT = 775.0f;
     const float       Game::FINAL_DEATH_PAUSE = 2.0f;
-    const float       Game::MIN_POWERUP_SPAWN_TIME = 3.0f;//30.0f;
-    const float       Game::MAX_POWERUP_SPAWN_TIME = 6.0f;//180.0f;
+    const float       Game::MIN_POWERUP_SPAWN_TIME = 30.0f;
+    const float       Game::MAX_POWERUP_SPAWN_TIME = 180.0f;
     const std::string Game::HUD_FONT("fonts/hudfont.fnt");
     const std::string Game::ENDGAME_FONT("fonts/menufont.fnt");
     const std::string Game::MISS_SOUND("sounds/miss.wav");
@@ -112,6 +112,7 @@ namespace typing
         Phrase::Init();
         Award::Init();
         Explosion::Init();
+        PowerupActivateEffect::Init();
         Laser::Init();
 
         // Initialise the wave creator, setting the minimum level that each

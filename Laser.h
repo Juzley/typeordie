@@ -14,7 +14,7 @@ namespace typing
     public:
         // Ctors/Dtors
         Laser(const juzutil::Vector3& start, const juzutil::Vector3& end, const ColourRGB& col)
-            : m_age(0), m_start(start), m_end(end), m_col(col), m_playedSound(false)
+            : m_age(0), m_start(start), m_end(end), m_col(col)
         {
         }
 
@@ -39,7 +39,6 @@ namespace typing
         juzutil::Vector3 m_start;
         juzutil::Vector3 m_end;
         ColourRGB        m_col;
-        bool             m_playedSound;
     };
     typedef std::shared_ptr<Laser> LaserPtr;
 }
