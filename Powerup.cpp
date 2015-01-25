@@ -28,8 +28,9 @@ namespace typing
         if (m_creators.empty()) {
             throw std::runtime_error("Empty Powerup Factory");
         } else {
-            unsigned int index = RAND.Range(static_cast<unsigned int>(0),
-                                            static_cast<unsigned int>(m_creators.size() - 1));
+            unsigned int index = RAND.Range(
+                    static_cast<unsigned int>(0),
+                    static_cast<unsigned int>(m_creators.size() - 1));
             PowerupCreator create = m_creators.at(index);
             return create(GAME.GetPhrase(PhraseBook::PL_LONG), origin);
         }
@@ -44,7 +45,6 @@ namespace typing
     {
         *hit = m_phrase.OnType(c, GAME.GetTime());
 
-
         if (!*hit) {
             ExplosionPtr explosion(new Explosion(m_origin,
                                                  ColourRGBA::Red()));
@@ -57,7 +57,6 @@ namespace typing
             if (*phraseFinished) {
                 GAME.MakeCharAvail(m_phrase.GetStartChar());
                 GAME.AddExtraLife();
-                // TODO: Offset award display
                 GAME.AddEffect2d(
                     AwardPtr(new Award(
                                 GAME.GetCam().PerspectiveProject(m_origin),
@@ -117,6 +116,88 @@ namespace typing
     }
 
     void ExtraLife::Update()
+    {
+        if (GAME.GetTime() - m_spawnTime >= POWERUP_LIFETIME) {
+            GAME.MakeCharAvail(GetStartChar());
+            m_unlink = true;
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    // ShortenPhrases
+    //////////////////////////////////////////////////////////////////////////
+    void ShortenPhrases::OnType(char c, bool *hit, bool *phraseFinished)
+    {
+        *hit = m_phrase.OnType(c, GAME.GetTime());
+
+        if (!*hit) {
+            ExplosionPtr explosion(new Explosion(m_origin,
+                                                 ColourRGBA::Blue()));
+            GAME.AddEffect(explosion);
+            GAME.MakeCharAvail(m_phrase.GetStartChar());
+            m_unlink = true;
+        } else {
+            *phraseFinished = m_phrase.Finished();
+
+            if (*phraseFinished) {
+                GAME.MakeCharAvail(m_phrase.GetStartChar());
+                GAME.StartShortenPhrases();
+                GAME.AddEffect2d(
+                    AwardPtr(new Award(
+                                GAME.GetCam().PerspectiveProject(m_origin),
+                                AWARD_SHORTEN_PHRASES,
+                                GAME.GetTime())));
+                m_unlink = true;
+            }
+        }
+    }
+
+    void ShortenPhrases::Draw2D()
+    {
+        m_phrase.Draw(m_origin);
+    }
+
+    void ShortenPhrases::Draw3D()
+    {
+        ColourRGBA sphereColour(POWERUP_SPHERE_COLOUR);
+        const float blinkTime = (GAME.GetTime() - m_spawnTime) -
+                                    (POWERUP_LIFETIME - POWERUP_BLINK_TIME);
+        if (blinkTime > 0.0f) {
+            sphereColour[ColourRGBA::COLOUR_ALPHA] =
+                POWERUP_SPHERE_COLOUR.GetAlpha() *
+                    fabs(cosf((blinkTime / POWERUP_BLINK_TIME) *
+                              static_cast<float>(M_PI) * POWERUP_BLINK_SPEED));
+        }
+
+        glPushMatrix();
+            glTranslatef(m_origin[0], m_origin[1], m_origin[2]);
+
+            glPushMatrix();
+                float angle =
+                    RadToDeg(acosf(fmod(POWERUP_ROTATE_SPEED * 
+                                        GAME.GetTime(), 2.0f) - 1.0f));
+                glRotatef(angle, 0.0f, 1.0f, 0.0f);
+
+                glPushMatrix();
+                    glTranslatef(-0.0f, -5.0f, -0.0f);
+                    glScalef(10.0f, 10.0f, 10.0f);
+                    DrawPyramid(ColourRGBA::Blue());
+                glPopMatrix();
+            glPopMatrix();
+
+            glPushMatrix();
+                glScalef(20.0f, 20.0f, 20.0f);
+                DrawSphere(ColourRGBA(sphereColour));
+            glPopMatrix();
+        glPopMatrix();
+    }
+
+    void ShortenPhrases::OnSpawn()
+    {
+        m_spawnTime = GAME.GetTime();
+    }
+
+    void ShortenPhrases::Update()
     {
         if (GAME.GetTime() - m_spawnTime >= POWERUP_LIFETIME) {
             GAME.MakeCharAvail(GetStartChar());

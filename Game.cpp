@@ -58,6 +58,10 @@ namespace typing
     // damaged.
     static const float DAMAGE_FLASH_TIME = 0.5f;
 
+    // The length of time that phrases are shortened by the shorter phrases
+    // powerup.
+    static const float SHORTEN_PHRASES_TIME = 20.0f;
+
     // The maximum streak that counts towards the score multiplier.
     static const unsigned int MAX_COMBO = 4;
 
@@ -66,8 +70,8 @@ namespace typing
     const float       Game::GAME_SCREEN_LEFT = -775.0f;
     const float       Game::GAME_SCREEN_RIGHT = 775.0f;
     const float       Game::FINAL_DEATH_PAUSE = 2.0f;
-    const float       Game::MIN_POWERUP_SPAWN_TIME = 30.0f;
-    const float       Game::MAX_POWERUP_SPAWN_TIME = 180.0f;
+    const float       Game::MIN_POWERUP_SPAWN_TIME = 3.0f;//30.0f;
+    const float       Game::MAX_POWERUP_SPAWN_TIME = 6.0f;//180.0f;
     const std::string Game::HUD_FONT("fonts/hudfont.fnt");
     const std::string Game::ENDGAME_FONT("fonts/menufont.fnt");
     const std::string Game::MISS_SOUND("sounds/miss.wav");
@@ -113,10 +117,10 @@ namespace typing
         // Initialise the wave creator, setting the minimum level that each
         // wave can be used at.
         m_waveCreator.AddWave<BasicEnemyWave>(0);
-        m_waveCreator.AddWave<MissileEnemyWave>(0);
-        m_waveCreator.AddWave<AccelEnemyWave>(1);
-        m_waveCreator.AddWave<BombEnemyWave>(2);
-        m_waveCreator.AddWave<SeekerEnemyWave>(3);
+        m_waveCreator.AddWave<MissileEnemyWave>(1);
+        m_waveCreator.AddWave<AccelEnemyWave>(2);
+        m_waveCreator.AddWave<BombEnemyWave>(3);
+        m_waveCreator.AddWave<SeekerEnemyWave>(4);
 
         m_bossWaveCreator.AddWave<KnockbackBossEnemyWave>();
         m_bossWaveCreator.AddWave<MissileBossEnemyWave>();
@@ -124,6 +128,7 @@ namespace typing
 
         // Initialise powerups
         m_powerups.Register(CreatePowerup<ExtraLife>);
+        m_powerups.Register(CreatePowerup<ShortenPhrases>);
     }
 
 
@@ -132,6 +137,7 @@ namespace typing
         const int MUSIC_FADE_IN_TIME = 2000;
 
         m_phrases.MakeAllCharsAvail();
+        m_phrases.UseNormalPhrases();
 
         m_entities.clear();
         m_effects.clear();
@@ -333,6 +339,11 @@ namespace typing
             // Ready to go up to the next level, but need to spawn a boss
             // first.
             m_bossWavePending = true;
+        }
+
+        if (m_phrases.UsingShortPhrases() &&
+            GetTime() > m_shortenPhrasesTime + SHORTEN_PHRASES_TIME) {
+            m_phrases.UseNormalPhrases();
         }
 
         SpawnEnemies();
@@ -934,5 +945,12 @@ namespace typing
         const float MUSIC_FADE_OUT_TIME = 2.0f;
         m_gameEndTime = GetTime() + pause;
         Mix_FadeOutMusic(static_cast<int>((pause + MUSIC_FADE_OUT_TIME) * 1000));
+    }
+
+
+    void Game::StartShortenPhrases()
+    {
+        m_shortenPhrasesTime = GetTime();
+        m_phrases.UseShortPhrases();
     }
 }

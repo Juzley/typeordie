@@ -16,6 +16,7 @@ namespace typing
         AWARD_POOR,
         AWARD_BAD,
         AWARD_EXTRALIFE,
+        AWARD_SHORTEN_PHRASES,
     };
 
     class Award : public Effect
@@ -47,6 +48,7 @@ namespace typing
         static const ColourRGB   AWARD_POOR_COLOUR;
         static const ColourRGB   AWARD_BAD_COLOUR;
         static const ColourRGB   AWARD_EXTRALIFE_COLOUR;
+        static const ColourRGB   AWARD_SHORTEN_PHRASES_COLOUR;
 
         static const std::string AWARD_EXCELLENT_STRING;
         static const std::string AWARD_GOOD_STRING;
@@ -54,6 +56,7 @@ namespace typing
         static const std::string AWARD_POOR_STRING;
         static const std::string AWARD_BAD_STRING;
         static const std::string AWARD_EXTRALIFE_STRING;
+        static const std::string AWARD_SHORTEN_PHRASES_STRING;
 
         juzutil::Vector2 m_origin;
         AwardType        m_type;

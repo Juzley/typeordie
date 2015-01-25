@@ -79,7 +79,7 @@ namespace typing
     {
     public:
         // Methods
-        void Register(PowerupPtr (*creator)(const std::string& phrase, const juzutil::Vector3& origin))//PowerupCreator creator)
+        void Register(PowerupCreator creator)
         {
             m_creators.push_back(creator);
         }
@@ -102,6 +102,62 @@ namespace typing
     {
     public:
         ExtraLife (const std::string& phrase, const juzutil::Vector3& origin)
+            : m_phrase(phrase), m_origin(origin), m_unlink(false)
+        {
+        }
+
+        const juzutil::Vector3& GetOrigin() const
+        {
+            return m_origin;
+        }
+
+        char GetStartChar() const
+        {
+            return m_phrase.GetStartChar();
+        }
+
+        bool StartsWith(const char c) const
+        {
+            return (GetStartChar() == c);
+        }
+
+        bool IsPhraseSingle() const
+        {
+            return (m_phrase.Length() == 1);
+        }
+
+        float GetTypingSpeed() const
+        {
+            return (m_phrase.GetTypingSpeed());
+        }
+
+        bool Unlink () const
+        {
+            return m_unlink;
+        }
+
+        void OnSpawn();
+        void Update();
+        void OnType(char c, bool *hit, bool *phraseFinished);
+        void Draw2D();
+        void Draw3D();    
+
+    private:
+        Phrase           m_phrase;
+        juzutil::Vector3 m_origin;
+        bool             m_unlink;
+        float            m_spawnTime;
+    };
+    
+
+    //////////////////////////////////////////////////////////////////////////
+    // ShortenPhrases
+    //////////////////////////////////////////////////////////////////////////
+    class ShortenPhrases : public Powerup
+    {
+    public:
+        ShortenPhrases (const std::string& phrase,
+                       const juzutil::Vector3& origin)
             : m_phrase(phrase), m_origin(origin), m_unlink(false)
         {
         }

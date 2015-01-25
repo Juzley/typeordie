@@ -185,6 +185,10 @@ namespace typing
                                          ColourRGB::Red()));
                 GAME.AddEffect(laser);
                 CalcNextChargeTime();
+
+                // If we failed to type the phrase in time, get a new phrase.
+                GAME.MakeCharAvail(m_phrase.GetStartChar());
+                m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_LONG));
             }
         }
     }

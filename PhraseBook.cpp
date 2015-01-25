@@ -43,6 +43,10 @@ namespace typing
         // so we need this to return a reference to in case of error
         static const std::string defPhrase("default");
 
+        if (UsingShortPhrases() && len > PL_SINGLE) {
+            len = static_cast<PhraseLength>(static_cast<int>(len) - 1);
+        }
+
         // First pick a start character from the available ones.
         const char startChar = PickAvailChar();
         if (startChar == '\0') {
@@ -67,6 +71,10 @@ namespace typing
                                                  PhraseLength length)
     {
         std::string phrase;
+
+        if (UsingShortPhrases() && length > PL_SINGLE) {
+            length = static_cast<PhraseLength>(static_cast<int>(length) - 1);
+        }
 
         for (unsigned int i = 0; i < words; i++) {
             const char c = (i == 0 ? PickAvailChar() : PickRandomChar());

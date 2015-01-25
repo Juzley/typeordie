@@ -31,6 +31,9 @@ namespace typing
     const std::string Award::AWARD_EXTRALIFE_STRING("EXTRA LIFE!");
     const ColourRGB   Award::AWARD_EXTRALIFE_COLOUR(0.0f, 1.0f, 0.0f);
 
+    const std::string Award::AWARD_SHORTEN_PHRASES_STRING("SHORTER PHRASES!");
+    const ColourRGB   Award::AWARD_SHORTEN_PHRASES_COLOUR(0.0f, 1.0f, 0.0f);
+
 
     void Award::Init()
     {
@@ -98,6 +101,10 @@ namespace typing
             col = &AWARD_EXTRALIFE_COLOUR;
             str = &AWARD_EXTRALIFE_STRING;
             break;
+
+        case AWARD_SHORTEN_PHRASES:
+            col = &AWARD_SHORTEN_PHRASES_COLOUR;
+            str = &AWARD_SHORTEN_PHRASES_STRING;
         }
 
         FONTS.Print(AWARD_FONT, m_origin.GetX(), y, AWARD_FONT_HEIGHT, ColourRGBA(*col, alpha), Font::ALIGN_CENTER, *str);

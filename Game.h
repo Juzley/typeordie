@@ -39,6 +39,7 @@ namespace typing
         void StartNewGame();
         void Damage();
         void EndGame(float pause = 0);
+        void StartShortenPhrases();
 
         void AddEntity(const EntityPtr& ent)
         {
@@ -205,6 +206,7 @@ namespace typing
         unsigned int                 m_level;
         float                        m_nextLevelTime;
         float                        m_damageTime;
+        float                        m_shortenPhrasesTime;
 
         // Enemy spawn variables
         RandomEnemyWaveFactory       m_waveCreator;

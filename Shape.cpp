@@ -40,12 +40,12 @@ namespace typing
 
         glColor4f(faceColour.GetRed(), faceColour.GetGreen(), faceColour.GetBlue(), faceColour.GetAlpha());
         glBegin(GL_TRIANGLE_FAN);
-            glVertex3i( 0, 0,  0);
-            glVertex3d( 1, 1,  1);
-            glVertex3f( 1, 1, -1);
-            glVertex3f(-1, 1, -1);
-            glVertex3f(-1, 1,  1);
+            glVertex3f( 0, 0,  0);
             glVertex3f( 1, 1,  1);
+            glVertex3i( 1, 1, -1);
+            glVertex3i(-1, 1, -1);
+            glVertex3i(-1, 1,  1);
+            glVertex3i( 1, 1,  1);
         glEnd();
 
         glEnable(GL_TEXTURE_2D);

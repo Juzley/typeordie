@@ -29,6 +29,21 @@ namespace typing
         void               MakeCharAvail(char c);
         void               MakeAllCharsAvail();
 
+        void UseShortPhrases()
+        {
+            m_shortPhrases = true;
+        }
+
+        void UseNormalPhrases()
+        {
+            m_shortPhrases = false;
+        }
+
+        bool UsingShortPhrases()
+        {
+            return m_shortPhrases;
+        }
+
 #ifdef _DEBUG
         void               DrawChars(const std::string &font, float y, float height);
 #endif
@@ -58,9 +73,10 @@ namespace typing
         char            PickRandomChar();
 
         // Members
-        PhraseMap       m_phrases;
+        PhraseMap      m_phrases;
         std::set<char> m_availChars;
         std::set<char> m_allChars; 
+        bool           m_shortPhrases;
     };
 }
 
