@@ -6,6 +6,7 @@ namespace typing
     void Sound::Play(int loops)
     {
         m_channel = Mix_PlayChannel(-1, m_chunk, loops);
+        printf("%d\n",m_channel);
     }
 
     void Sound::FadeIn(int loops, int ms)
@@ -72,7 +73,6 @@ namespace typing
     {
         return Sound(GetChunk(soundName));
     }
-
 
     // SoundManager::Play can be used for 'fire and forget' sound playing.
     // The underlying Sound is not returned so there is no further control of the sound

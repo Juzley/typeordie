@@ -6,6 +6,7 @@
 #include "Phrase.h"
 #include "BBox.h"
 #include "Game.h"
+#include "SoundManager.h"
 
 namespace typing
 {
@@ -93,6 +94,8 @@ namespace typing
         {
         }
 
+        static void Init();
+
         void OnSpawn();
         void Update();
         void Draw2D();
@@ -163,6 +166,8 @@ namespace typing
         bool             m_moving;
         float            m_nextChargeFinishTime;
         ColourRGBA       m_colour;
+        bool             m_chargeSoundPlaying;
+        Sound            m_chargeSound;
     };
 
 

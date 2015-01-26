@@ -5,6 +5,7 @@
 #include "Explosion.h"
 #include "Shape.h"
 #include "Laser.h"
+#include "SoundManager.h"
 
 
 namespace typing
@@ -127,6 +128,15 @@ namespace typing
     // quicker as the boss gets closer to death.
     const float ChargeBoss::CHARGEBOSS_BASE_CHARGE_TIME  = 5.0f;
     const float ChargeBoss::CHARGEBOSS_CHARGE_TIME_SCALE = 0.5f;
+    const std::string CHARGEBOSS_FIRE_SOUND("sounds/explosion.wav");
+    const std::string CHARGEBOSS_CHARGE_SOUND("sounds/charge.wav");
+    const float       CHARGEBOSS_CHARGE_SOUND_LENGTH = 3.0f;
+
+    void ChargeBoss::Init()
+    {
+        SOUNDS.Add(CHARGEBOSS_FIRE_SOUND);
+        SOUNDS.Add(CHARGEBOSS_CHARGE_SOUND);
+    }
 
     void ChargeBoss::OnSpawn()
     {
@@ -138,6 +148,8 @@ namespace typing
 
         m_colour = ColourRGBA::White();
         m_colour[ColourRGBA::COLOUR_ALPHA] = 0.4f;
+
+        m_chargeSound = SOUNDS.Get(CHARGEBOSS_CHARGE_SOUND);
     }
 
     void ChargeBoss::Draw2D()
@@ -149,10 +161,12 @@ namespace typing
     {
         // This boss starts white and gets ready the closer it gets to
         // charging.
-        m_colour[ColourRGBA::COLOUR_GREEN] =
-        m_colour[ColourRGBA::COLOUR_BLUE] =
+        if (!m_moving) {
+            m_colour[ColourRGBA::COLOUR_GREEN] =
+            m_colour[ColourRGBA::COLOUR_BLUE] =
                                     (m_nextChargeFinishTime - GAME.GetTime()) /
                                     CHARGEBOSS_BASE_CHARGE_TIME;
+        }
 
         glPushMatrix();
             glTranslatef(m_origin[0], m_origin[1], m_origin[2]);
@@ -178,6 +192,13 @@ namespace typing
                 CalcNextChargeTime();
             }
         } else {
+            if (!m_chargeSoundPlaying &&
+                m_nextChargeFinishTime - GAME.GetTime() <
+                                        CHARGEBOSS_CHARGE_SOUND_LENGTH) {
+                m_chargeSound.Play();
+                m_chargeSoundPlaying = true;
+            }
+
             if (m_nextChargeFinishTime <= GAME.GetTime()) {
                 GAME.Damage();
                 LaserPtr laser(new Laser(m_origin,
@@ -189,6 +210,10 @@ namespace typing
                 // If we failed to type the phrase in time, get a new phrase.
                 GAME.MakeCharAvail(m_phrase.GetStartChar());
                 m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_LONG));
+
+                SOUNDS.Play(CHARGEBOSS_FIRE_SOUND);
+                m_chargeSound.Stop();
+                m_chargeSoundPlaying = false;
             }
         }
     }
@@ -208,6 +233,9 @@ namespace typing
                 ExplosionPtr explosion(new Explosion(m_origin, m_colour));
                 GAME.AddEffect(explosion);
             }
+
+            m_chargeSound.Stop();
+            m_chargeSoundPlaying = false;
         }
     }
 

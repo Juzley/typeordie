@@ -22,7 +22,7 @@ namespace typing
         {
         }
 
-        void Play(int loops);
+        void Play(int loops = 0);
         void FadeIn(int loops, int ms);
         void FadeOut(int ms);
         void Stop();
