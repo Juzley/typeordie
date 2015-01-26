@@ -35,7 +35,8 @@ namespace typing
     }
 
     // This assumes that the view has already been set up in ortho projection.
-    void Phrase::Draw(const juzutil::Vector3& origin)
+    void Phrase::Draw(const juzutil::Vector3& origin,
+                      PhraseDrawOption        option)
     {
         const float height =
             PHRASE_HEIGHT * APP.GetOption<float>("text-scale");
@@ -57,32 +58,43 @@ namespace typing
                                             PHRASE_FONT, height, remaining);
             const float totalWidth = typedWidth + remainingWidth;
 
-            float x = coords[0] - totalWidth / 2.0f;
-            float y = coords[1] - (height + PHRASE_BORDER_GAP) -
+            float x = coords[0];
+            float y = coords[1] - height / 2.0f - PHRASE_BORDER_GAP -
                                                             PHRASE_Y_OFFSET;
+                
+            glPushMatrix();
+            glTranslatef(x, y, 0.0f);
+
+            if (option == PHRASE_DRAW_BACKWARDS) {
+                glScalef(-1.0f, 1.0f, 1.0f);
+            }
+
+            glTranslatef(-totalWidth / 2.0f,
+                         -height / 2.0f - PHRASE_BORDER_GAP,
+                         0.0f);
 
             // Draw the backing
             DrawRect(ColourRGBA(0.0f, 0.0f, 0.0f, 0.5f),
-                     x - PHRASE_BORDER_GAP,
-                     y - PHRASE_BORDER_GAP,
+                     -PHRASE_BORDER_GAP,
+                     -PHRASE_BORDER_GAP,
                      totalWidth + PHRASE_BORDER_GAP * 2,
                      height + PHRASE_BORDER_GAP * 2);
 
             // Draw the text
             FONTS.Print(PHRASE_FONT,
-                        x, y, height,
+                        0.0f, 0.0f, height,
                         ColourRGBA::Red(),
                         Font::ALIGN_LEFT,
                         typed);
             FONTS.Print(PHRASE_FONT,
-                        x + typedWidth, y, height,
+                        typedWidth, 0.0f, height,
                         ColourRGBA::White(),
                         Font::ALIGN_LEFT,
                         remaining);
 
             // Draw the corners of the backing
-            x = x - PHRASE_BORDER_GAP;
-            y = y - PHRASE_BORDER_GAP;
+            x = -PHRASE_BORDER_GAP;
+            y = -PHRASE_BORDER_GAP;
             DrawLine(ColourRGBA::White(), x, y, x, y + PHRASE_BORDER_LINE_LENGTH);
             DrawLine(ColourRGBA::White(), x, y, x + PHRASE_BORDER_LINE_LENGTH, y);
             x += totalWidth + PHRASE_BORDER_GAP * 2;
@@ -94,6 +106,8 @@ namespace typing
             x -= totalWidth + PHRASE_BORDER_GAP * 2;
             DrawLine(ColourRGBA::White(), x, y, x, y - PHRASE_BORDER_LINE_LENGTH);
             DrawLine(ColourRGBA::White(), x, y, x + PHRASE_BORDER_LINE_LENGTH, y);
+
+            glPopMatrix();
         }
     }
 }

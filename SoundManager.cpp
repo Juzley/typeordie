@@ -6,7 +6,6 @@ namespace typing
     void Sound::Play(int loops)
     {
         m_channel = Mix_PlayChannel(-1, m_chunk, loops);
-        printf("%d\n",m_channel);
     }
 
     void Sound::FadeIn(int loops, int ms)
