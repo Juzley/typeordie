@@ -7,6 +7,7 @@
 #include <map>
 #include <memory>
 #include <array>
+#include "FontManager.h"
 
 namespace typing
 {
@@ -22,7 +23,7 @@ namespace typing
             PL_COUNT };
 
         // Methods
-        void               Init();
+        void               Init(Font phraseFont);
         const std::string& GetPhrase(PhraseLength length);
         const std::string  GetComboPhrase(unsigned int words,
                                           PhraseLength length);

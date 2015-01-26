@@ -12,7 +12,7 @@ namespace typing
 {
     const std::string PhraseBook::PHRASE_FILE("phrases/phrases");
 
-    void PhraseBook::Init()
+    void PhraseBook::Init(Font phraseFont)
     {
         FILE * phraseFile = fopen(PHRASE_FILE.c_str(), "r");
         if (phraseFile == NULL) {
@@ -21,17 +21,16 @@ namespace typing
 
         char buffer[MAX_PHRASE_LENGTH];
         while (fgets(buffer, MAX_PHRASE_LENGTH, phraseFile) != NULL) {
-            char *c = strchr(buffer, '\r');
-            if (c != NULL) {
-                *c = '\0';
+            for (char *c = buffer;; c++) {
+                if (*c == '\r' || *c == '\n') {
+                    *c = '\0';
+                    AddPhrase(buffer);
+                } else if (!phraseFont.HasChar(*c)) {
+                    // Don't add the phrase if the font doesn't have
+                    // all the letters required.
+                    break;
+                }
             }
-
-            c = strchr(buffer, '\n');
-            if (c != NULL) {
-                *c = '\0';
-            }
-
-            AddPhrase(buffer);
         }
 
         fclose(phraseFile);

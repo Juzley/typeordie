@@ -162,6 +162,11 @@ namespace typing
         }
     }
 
+    bool Font::HasChar(char c)
+    {
+        return m_charMap.find(c) != m_charMap.end();
+    }
+
 
     //////////////////////////////////////////////////////////////////////////
     // FontManager

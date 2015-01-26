@@ -11,6 +11,8 @@ namespace typing
     class Phrase
     {
     public:
+        static const std::string PHRASE_FONT;
+
         Phrase()
             : m_phraseIndex(0), m_startTime(0.0f), m_lastCorrectTypeTime(0.0f)
         {
@@ -71,7 +73,6 @@ namespace typing
 
 
     private:
-        static const std::string PHRASE_FONT;
         static const float       PHRASE_HEIGHT;
         static const float       PHRASE_BORDER_GAP;
         static const float       PHRASE_BORDER_LINE_LENGTH;

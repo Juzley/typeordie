@@ -31,6 +31,7 @@ namespace typing
         void  Load(const std::string& fileName);
         float GetLineWidth(float h, const std::string& text) const;
         void  Print(float x, float y, float h, ColourRGBA col, Align align, const std::string& text) const;
+        bool  HasChar(char c);
 
     private:
         // Typedefs

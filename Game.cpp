@@ -104,8 +104,6 @@ namespace typing
             throw FileNotFoundException(GAME_MUSIC);
         }
 
-        m_phrases.Init();
-
         // Initialise entities needed by the game.
         // Makes sure all required media is loaded.
         Player::Init();
@@ -116,6 +114,8 @@ namespace typing
         Laser::Init();
         Missile::Init();
         ChargeBoss::Init();
+
+        m_phrases.Init(FONTS.Get(Phrase::PHRASE_FONT));
 
         // Initialise the wave creator, setting the minimum level that each
         // wave can be used at.
