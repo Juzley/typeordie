@@ -24,7 +24,7 @@ namespace typing
     //////////////////////////////////////////////////////////////////////////
 
     static const std::string POWERUPACTIVATEEFFECT_SOUND(
-                                                 "sounds/explosion.wav");
+                                                 "sounds/powerup.wav");
     static const std::string POWERUPACTIVATEEFFECT_FLARE_TEXTURE(
                                                  "textures/game/flare.tga");
     static const float POWERUPACTIVATEEFFECT_LIFETIME = 0.4f; 
