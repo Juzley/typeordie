@@ -165,6 +165,12 @@ namespace typing
     const float      Missile::MISSILE_SPEED = 150.0f;
     const ColourRGBA Missile::MISSILE_COLOUR(1.0f, 0.0f, 0.0f, 0.4f);
     const ColourRGBA Missile::MISSILE_OUTLINECOLOUR(1.0f, 0.8f, 0.8f, 1.0f);
+    const std::string MISSILE_LAUNCH_SOUND("sounds/missile.wav");
+
+    void Missile::Init()
+    {
+        SOUNDS.Add(MISSILE_LAUNCH_SOUND);
+    }
 
     void Missile::Draw2D()
     {
@@ -186,6 +192,7 @@ namespace typing
         m_dir = GAME.GetPlayerOrigin() - m_origin;
         m_dir.Normalize();
         m_angle = (atan2(m_dir[0], -m_dir[1]) / static_cast<float>(M_PI) * 180.0f);
+        SOUNDS.Play(MISSILE_LAUNCH_SOUND);
     }
 
     void Missile::Update()

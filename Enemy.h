@@ -188,6 +188,8 @@ namespace typing
         {
         }
 
+        static void Init();
+
         void Update();
         void Draw2D();
         void Draw3D();

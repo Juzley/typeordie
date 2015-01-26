@@ -114,6 +114,7 @@ namespace typing
         Explosion::Init();
         PowerupActivateEffect::Init();
         Laser::Init();
+        Missile::Init();
 
         // Initialise the wave creator, setting the minimum level that each
         // wave can be used at.
