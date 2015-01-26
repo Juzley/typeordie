@@ -13,7 +13,7 @@ namespace typing
     public:
         static void Init();
 
-        void Reset();
+        void Reset(unsigned int lives);
         void Draw();
         void Update();
         void Fire();
@@ -29,9 +29,18 @@ namespace typing
             return PLAYER_BOUNDS + PLAYER_ORIGIN;
         }
 
+        unsigned int Lives() const
+        {
+            return m_lives;
+        }
+
+        void ExtraLife()
+        {
+            m_lives++;
+        }
+
     private:
         // Consts/Enums
-        static const unsigned int     HEALTH_MAX = 100;
         static const float            FIRE_FADE_TIME;
         static const float            DAMAGE_FADE_TIME;
         static const float            PLAYER_SIDE;
@@ -39,7 +48,7 @@ namespace typing
         static const BBox             PLAYER_BOUNDS;
 
         // Members
-        unsigned int m_health;
+        unsigned int m_lives;
         float        m_lastFireTime;
         float        m_damageTime;
     };

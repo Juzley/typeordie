@@ -17,14 +17,21 @@ namespace typing
         }
 
         Phrase(const std::string& phrase)
-            : m_phrase(phrase), m_phraseIndex(0), m_startTime(0.0f), m_lastCorrectTypeTime(0.0f)
+            : m_phrase(phrase), m_phraseIndex(0), m_startTime(0.0f),
+            m_lastCorrectTypeTime(0.0f)
         {
         }
 
         static void Init();
 
+        typedef enum {
+            PHRASE_DRAW_DEFAULT,
+            PHRASE_DRAW_BACKWARDS,
+        } PhraseDrawOption;
+
         bool OnType(char c, float time);
-        void Draw(const juzutil::Vector3& origin);
+        void Draw(const juzutil::Vector3& origin,
+                  PhraseDrawOption        option = PHRASE_DRAW_DEFAULT);
 
         void Reset(const std::string& phrase)
         {

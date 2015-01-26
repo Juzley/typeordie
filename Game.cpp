@@ -146,12 +146,11 @@ namespace typing
         m_effects.clear();
         m_effects2d.clear();
         m_activeWaves.clear();
-        m_lives = GAME_START_LIVES;
 
         Pause(false);
         Activate(true);
 
-        m_player.Reset();
+        m_player.Reset(GAME_START_LIVES);
         m_timer.Reset();
 
         m_level         = 0; 
@@ -442,7 +441,7 @@ namespace typing
                     "LIVES");
         FONTS.Print(HUD_FONT, HUD_LIVES_X, ORTHO_HEIGHT - HUD_NUMBER_HEIGHT,
                     HUD_NUMBER_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
-                    std::to_string(m_lives));
+                    std::to_string(m_player.Lives()));
         FONTS.Print(HUD_FONT, HUD_SCORE_X,
                     ORTHO_HEIGHT - HUD_NUMBER_HEIGHT - HUD_TEXT_HEIGHT,
                     HUD_TEXT_HEIGHT, ColourRGBA::White(), Font::ALIGN_CENTER,
@@ -696,10 +695,10 @@ namespace typing
 
             DrawBackground();
 
+            m_player.Draw();
+
             if (IsAlive())
             {
-                m_player.Draw();
-
                 // If we have a current target, draw a targetting line from the
                 // player to the target.
                 EntityPtr ent = m_targetEnt.lock();
@@ -922,10 +921,8 @@ namespace typing
 
     void Game::Damage()
     {
-        m_player.Damage();
-
-        if (m_lives > 0) {
-            m_lives--;
+        if (m_player.Lives() > 0) {
+            m_player.Damage();
             m_usedLives++;
             m_damageTime = GetTime();
 
@@ -933,7 +930,7 @@ namespace typing
                      m_entities.end(),
                      std::mem_fn(&Entity::OnPlayerDie));
 
-            if (m_lives == 0) {
+            if (m_player.Lives() == 0) {
                 ExplosionPtr explosion(
                     new Explosion(GetPlayerOrigin(), ColourRGBA::Red()));
                 AddEffect(explosion);

@@ -133,7 +133,7 @@ namespace typing
 
         void AddExtraLife()
         {
-            m_lives++;
+            m_player.ExtraLife();
         }
 
         // Singleton implementation
@@ -175,7 +175,7 @@ namespace typing
 
         bool IsAlive() const
         {
-            return (m_lives > 0);
+            return (m_player.Lives() > 0);
         }
 
         bool HasGameEnded() const
@@ -195,7 +195,6 @@ namespace typing
         bool                         m_paused;
         bool                         m_invincible;
         Timer                        m_timer;
-        unsigned int                 m_lives;
         unsigned int                 m_score;
         unsigned int                 m_streak;
         float                        m_gameEndTime;
