@@ -17,13 +17,14 @@ namespace typing
     class KnockbackBoss : public Entity
     {
     public:
-        KnockbackBoss()
+        KnockbackBoss(float speed = KNOCKBACKBOSS_ADVANCE_SPEED)
+            : m_speed(speed)
         {
         }
 
         void OnSpawn();
         void Update();
-        void Draw2D();
+        virtual void Draw2D();
         void Draw3D();
         void OnType(char c, bool *hit, bool *phraseFinished);
         void OnCollide();
@@ -71,17 +72,37 @@ namespace typing
 
         unsigned int GetScore() const
         {
-            return KNOCKBACKBOSS_HEALTH;
+            return KNOCKBACKBOSS_SCORE;
         }
 
-    private:
+    protected:
         static const unsigned int KNOCKBACKBOSS_SCORE = 50;
-        static const unsigned int KNOCKBACKBOSS_HEALTH = 10;
+        static const unsigned int KNOCKBACKBOSS_HEALTH = 8;
+        static const float        KNOCKBACKBOSS_ADVANCE_SPEED;
 
-        unsigned int        m_health;
-        juzutil::Vector3    m_origin;
-        Phrase              m_phrase;
-        bool                m_moving;
+        float            m_speed;
+        unsigned int     m_health;
+        juzutil::Vector3 m_origin;
+        Phrase           m_phrase;
+        bool             m_moving;
+    };
+
+
+    // Backwards knockback boss is like the knockback boss but the phrase is
+    // backwards
+    class BackwardsKnockbackBoss : public KnockbackBoss
+    {
+        public:
+            BackwardsKnockbackBoss(
+                        float speed = BACKWARDSKNOCKBACKBOSS_ADVANCE_SPEED)
+                : KnockbackBoss(speed)
+            {
+            }
+
+            void Draw2D();
+
+        private:
+            static const float BACKWARDSKNOCKBACKBOSS_ADVANCE_SPEED;
     };
 
 
@@ -144,7 +165,7 @@ namespace typing
 
         unsigned int GetScore() const
         {
-            return (CHARGEBOSS_HEALTH);
+            return (CHARGEBOSS_SCORE);
         }
 
     private:
@@ -156,7 +177,7 @@ namespace typing
         }
 
         static const unsigned int   CHARGEBOSS_SCORE = 50;
-        static const unsigned int   CHARGEBOSS_HEALTH = 10;
+        static const unsigned int   CHARGEBOSS_HEALTH = 8;
         static const float          CHARGEBOSS_BASE_CHARGE_TIME;
         static const float          CHARGEBOSS_CHARGE_TIME_SCALE;
 
@@ -232,7 +253,7 @@ namespace typing
 
     private:
         static const unsigned int     MISSILEBOSS_SCORE  = 50;
-        static const unsigned int     MISSILEBOSS_HEALTH = 10;
+        static const unsigned int     MISSILEBOSS_HEALTH = 8;
         static const unsigned int     MISSILEBOSS_WAVE_MISSILE_COUNT = 8;            
 
         static const float            MISSILEBOSS_WAVE_GAP;
@@ -287,6 +308,8 @@ namespace typing
     typedef BossEnemyWave<MissileBoss> MissileBossEnemyWave;
     typedef BossEnemyWave<ChargeBoss> ChargeBossEnemyWave;
     typedef BossEnemyWave<KnockbackBoss> KnockbackBossEnemyWave;
+    typedef BossEnemyWave<BackwardsKnockbackBoss>
+                                        BackwardsKnockbackBossEnemyWave;
 
 
 }

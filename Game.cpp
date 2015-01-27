@@ -128,6 +128,7 @@ namespace typing
         m_bossWaveCreator.AddWave<KnockbackBossEnemyWave>();
         m_bossWaveCreator.AddWave<MissileBossEnemyWave>();
         m_bossWaveCreator.AddWave<ChargeBossEnemyWave>();
+        m_bossWaveCreator.AddWave<BackwardsKnockbackBossEnemyWave>();
 
         // Initialise powerups
         m_powerups.Register(CreatePowerup<ExtraLife>);
@@ -179,6 +180,7 @@ namespace typing
         m_bossWavePending   = false;
         m_bossWaveActive    = false;
         m_bossWaveStartTime = 0.0f;
+        m_bossWaveCreator.Reset();
 
         m_nextPowerupTime = RAND.Range(MIN_POWERUP_SPAWN_TIME,
                                        MAX_POWERUP_SPAWN_TIME);

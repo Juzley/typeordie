@@ -22,7 +22,7 @@ namespace typing
      * Knockback Boss                                                        *
      *************************************************************************/
 
-    const float KNOCKBACKBOSS_ADVANCE_SPEED = 110.0f; 
+    const float KnockbackBoss::KNOCKBACKBOSS_ADVANCE_SPEED = 110.0f; 
     const float KNOCKBACKBOSS_KNOCKBACK_DISTANCE = 250.0f;
     const unsigned int KNOCKBACKBOSS_WORD_COUNT = 2;
     const enum PhraseBook::PhraseLength KNOCKBACKBOSS_PHRASE_LENGTH =
@@ -74,8 +74,7 @@ namespace typing
         } else {
             juzutil::Vector3 dir = GAME.GetPlayerOrigin() - m_origin;
             dir.Normalize();
-            m_origin += dir * (KNOCKBACKBOSS_ADVANCE_SPEED *
-                                                        GAME.GetFrameTime());
+            m_origin += dir * (m_speed * GAME.GetFrameTime());
         }
     }
 
@@ -120,6 +119,20 @@ namespace typing
     }
 
     
+    /*************************************************************************
+     * Backwards Knockback Boss                                              *
+     *************************************************************************/
+
+    const float BackwardsKnockbackBoss::
+                                BACKWARDSKNOCKBACKBOSS_ADVANCE_SPEED = 70.0f; 
+
+    void BackwardsKnockbackBoss::Draw2D()
+    {
+        m_phrase.Draw(m_origin,
+                      Phrase::PHRASE_DRAW_BACKWARDS);
+    }
+
+
     /*************************************************************************
      * Charge Boss                                                           *
      *************************************************************************/
