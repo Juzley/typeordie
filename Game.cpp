@@ -821,7 +821,14 @@ namespace typing
             if (!ent->SuppressAwardDisplay()) {
                 juzutil::Vector2 screenOrg = m_camera.PerspectiveProject(
                                                             ent->GetOrigin());
+
                 screenOrg[1] += AWARD_OFFSET;
+                if (!ent->Unlink()) {
+                    // If the ent isn't dead yet, then nudge the award up
+                    // further to avoid it overlapping the next phrase.
+                    screenOrg[1] += AWARD_OFFSET;
+                }
+
                 AwardPtr award(new Award(screenOrg, type, GetTime()));
                 AddEffect2d(award);
             }
