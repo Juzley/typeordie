@@ -126,7 +126,7 @@ namespace typing
 
     // Charge time is calculated as base + scale * health, so the charge gets
     // quicker as the boss gets closer to death.
-    const float ChargeBoss::CHARGEBOSS_BASE_CHARGE_TIME  = 5.0f;
+    const float ChargeBoss::CHARGEBOSS_BASE_CHARGE_TIME  = 10.0f;
     const float ChargeBoss::CHARGEBOSS_CHARGE_TIME_SCALE = 0.5f;
     const std::string CHARGEBOSS_FIRE_SOUND("sounds/explosion.wav");
     const std::string CHARGEBOSS_CHARGE_SOUND("sounds/charge.wav");

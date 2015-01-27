@@ -67,6 +67,7 @@ namespace typing
 
         // Methods
         PhraseVectorPtr GetPhraseVector(char startChar, PhraseLength cat);
+        PhraseVectorPtr GetValidPhraseVector(char startChar, PhraseLength cat);
         PhraseLength    LengthToCategory(unsigned int len);
         void            AddPhrase(const std::string& phrase);
         void            MakeCharUnavail(char c);

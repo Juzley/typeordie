@@ -52,7 +52,7 @@ namespace typing
             return defPhrase;
         }
 
-        PhraseVectorPtr phraseVec = GetPhraseVector(startChar, len);
+        PhraseVectorPtr phraseVec = GetValidPhraseVector(startChar, len);
         if (!phraseVec || phraseVec->empty()) {
             return defPhrase;
         }
@@ -80,7 +80,7 @@ namespace typing
 
             PhraseVectorPtr phraseVec;
             if (c != '\0' &&
-                (phraseVec = GetPhraseVector(c, length)) &&
+                (phraseVec = GetValidPhraseVector(c, length)) &&
                 !phraseVec->empty()) {
                 
                 if (!phrase.empty()) {
@@ -195,19 +195,29 @@ namespace typing
         // we don't have an array for.
         assert(m_phrases.find(startChar) != m_phrases.end());
         assert(cat >= PL_SINGLE && cat < PL_COUNT);
-
         vec = (*m_phrases[startChar])[cat];
-        if (!vec) {
+
+        return vec;
+    }
+
+    PhraseBook::PhraseVectorPtr PhraseBook::GetValidPhraseVector(
+                                                char         startChar,
+                                                PhraseLength cat)
+    {
+        PhraseVectorPtr vec = GetPhraseVector(startChar, cat);
+        while (!vec || vec->empty()) {
             APP.Log(App::LOG_DEBUG,
                     boost::str(boost::format(
                         "Couldn't find phrases for char %c category %u") %
                         startChar % cat));
 
-            // If we didn't find a word of this length, try a shorter one.
-            while (!vec && cat >= PL_SINGLE) {
+            if (cat == PL_SINGLE) {
+                // We've failed to find a populated vector.
+                break;
+            } else {
                 cat = static_cast<PhraseLength>(static_cast<int>(cat) - 1);
-                vec = (*m_phrases[startChar])[cat];
             }
+            vec = (*m_phrases[startChar])[cat];
         }
 
         return vec;
