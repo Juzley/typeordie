@@ -85,6 +85,7 @@ namespace typing
                 glTexCoord2f(1.0f, 0.0f);
                 glVertex3f(vertex[0], vertex[1], vertex[2]);
             glEnd();
+        glPopMatrix();
     }
 
 

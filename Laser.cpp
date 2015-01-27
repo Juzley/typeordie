@@ -19,12 +19,9 @@ namespace typing
     void Laser::Draw()
     {
         float alpha;
-        if (m_age < LINE_DRAW_TIME)
-        {
+        if (m_age < LINE_DRAW_TIME) {
             alpha = 1.0f;
-        }
-        else
-        {
+        } else {
             alpha = 1.0f - (m_age - LINE_DRAW_TIME) / LINE_FADE_TIME;
         }
 

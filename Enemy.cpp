@@ -234,7 +234,7 @@ namespace typing
     // MissileEnemy
     ////////////////////////////////////////////////////////////////////////////
 
-    const float            MissileEnemy::MISSILEENEMY_SPEED     = 40.0f;
+    const float            MissileEnemy::MISSILEENEMY_SPEED     = 60.0f;
     const float            MissileEnemy::MISSILEENEMY_FIREPAUSE = 3.0f;
     const ColourRGBA       MissileEnemy::MISSILEENEMY_COLOUR(1.0f, 0.20f, 0.0f, 0.4f);
     const ColourRGBA       MissileEnemy::MISSILEENEMY_OUTLINECOLOUR(1.0f, 0.9f, 0.8f, 1.0f);
@@ -414,10 +414,10 @@ namespace typing
 
     const ColourRGBA   SeekerEnemy::SEEKER_COLOUR(0.3f, 0.0f, 0.5f, 0.9f);
     const ColourRGBA   SeekerEnemy::SEEKER_OUTLINECOLOUR(0.5f, 0.0f, 1.0f, 1.0f);
-    const float        SeekerEnemy::SEEKER_SEEK_TIME = 3.0f;
+    const float        SeekerEnemy::SEEKER_SEEK_TIME = 5.0f;
     const float        SeekerEnemy::SEEKER_TURN_SPEED = 175.0f;
     const float        SeekerEnemy::SEEKER_SEEK_MOVE_SPEED = 120.0f;
-    const float        SeekerEnemy::SEEKER_ATTACK_MOVE_SPEED = 250.0f;
+    const float        SeekerEnemy::SEEKER_ATTACK_MOVE_SPEED = 300.0f;
 
     void SeekerEnemy::Draw2D()
     {

@@ -256,7 +256,7 @@ namespace typing
 
     void SeekerEnemyWave::Start()
     {
-        const unsigned int ENEMIES_MIN = 4;
+        const unsigned int ENEMIES_MIN = 3;
         const unsigned int ENEMIES_MAX = 12;
         const unsigned int ENEMIES_PER_LEVEL = 0;
 

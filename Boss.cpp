@@ -17,6 +17,122 @@ namespace typing
     const float            BOSS_DEST_EPSILON = 5.0f;
     const float            BOSS_ENTRY_SPEED = 100.0f;
 
+    /*************************************************************************
+     * Memory Boss                                                           *
+     *************************************************************************/
+
+    const unsigned int MEMORYBOSS_WORD_COUNT = 4;
+    const enum PhraseBook::PhraseLength MEMORYBOSS_PHRASE_LENGTH =
+                                                        PhraseBook::PL_SHORT;
+    const ColourRGBA MEMORYBOSS_COLOUR(0.6f, 1.0f, 0.6f, 0.4f);
+    const ColourRGBA MEMORYBOSS_LINE_COLOUR(0.6f, 1.0f, 0.6f, 1.0f);
+    const float MEMORYBOSS_LEARN_TIME = 3.0f;
+    const float MEMORYBOSS_TYPE_TIME = 5.0f;
+
+    void MemoryBoss::OnSpawn()
+    {
+        m_phrase.Reset("");
+        m_health = MEMORYBOSS_HEALTH;
+        m_origin = BOSS_START_ORIGIN;
+        m_state = MEMORYBOSS_MOVING;
+    }
+
+    void MemoryBoss::Draw2D()
+    {
+        if (m_state == MEMORYBOSS_LEARN) {
+            m_phrase.Draw(m_origin,
+                          Phrase::PHRASE_DRAW_BLOCKED);
+        } else if (m_state == MEMORYBOSS_TYPE) {
+            m_phrase.Draw(m_origin,
+                          Phrase::PHRASE_DRAW_HIDDEN);
+        }
+    }
+
+    void MemoryBoss::Draw3D()
+    {
+        glPushMatrix();
+            glTranslatef(m_origin[0], m_origin[1], m_origin[2]);
+
+            glPushMatrix();
+                glTranslatef(0.0f, 100.0f, 0.0f);
+                glScalef(30.0f, 100.0f, 30.0f);
+                DrawPyramid(MEMORYBOSS_COLOUR,
+                            MEMORYBOSS_LINE_COLOUR);
+            glPopMatrix();
+        glPopMatrix();
+    }
+
+    void MemoryBoss::Update()
+    {
+        juzutil::Vector3 dir;
+        switch (m_state) {
+        case MEMORYBOSS_MOVING:
+            dir = (BOSS_DEST_ORIGIN - m_origin);
+            dir.Normalize();
+            m_origin += dir * (BOSS_ENTRY_SPEED * GAME.GetFrameTime());
+
+            if (m_origin.Equals(BOSS_DEST_ORIGIN, BOSS_DEST_EPSILON)) {
+                m_phrase.Reset(GAME.GetComboPhrase(MEMORYBOSS_WORD_COUNT,
+                                                   MEMORYBOSS_PHRASE_LENGTH));
+                m_state = MEMORYBOSS_LEARN;
+                m_stateChangeTime = GAME.GetTime();
+            }
+            break;
+
+        case MEMORYBOSS_LEARN:
+            if (GAME.GetTime() - m_stateChangeTime >= MEMORYBOSS_LEARN_TIME) {
+                m_state = MEMORYBOSS_TYPE;
+                m_stateChangeTime = GAME.GetTime();
+            }
+            break;
+
+        case MEMORYBOSS_TYPE:
+            if (GAME.GetTime() - m_stateChangeTime >=
+                                                MEMORYBOSS_TYPE_TIME) {
+                GAME.Damage();
+                LaserPtr laser(new Laser(m_origin,
+                                         GAME.GetPlayerOrigin(),
+                                         ColourRGB::Red()));
+                GAME.AddEffect(laser);
+
+                GAME.MakeCharAvail(m_phrase.GetStartChar());
+                m_phrase.Reset(GAME.GetComboPhrase(MEMORYBOSS_WORD_COUNT,
+                                                   MEMORYBOSS_PHRASE_LENGTH));
+
+                m_state = MEMORYBOSS_LEARN;
+                m_stateChangeTime = GAME.GetTime();
+            }
+            break;
+        }
+    }
+
+    void MemoryBoss::OnType(char c, bool *hit, bool *phraseFinished)
+    {
+        if (m_state != MEMORYBOSS_TYPE) {
+            *hit = false;
+        } else {
+            *hit = m_phrase.OnType(c, GAME.GetTime());
+            *phraseFinished = m_phrase.Finished();
+
+            if (*phraseFinished) {
+                GAME.MakeCharAvail(m_phrase.GetStartChar());
+
+                if (--m_health > 0) {
+                    m_phrase.Reset(GAME.GetComboPhrase(
+                                                MEMORYBOSS_WORD_COUNT,
+                                                MEMORYBOSS_PHRASE_LENGTH));
+
+                    m_state = MEMORYBOSS_LEARN;
+                    m_stateChangeTime = GAME.GetTime();
+                } else {
+                    ExplosionPtr explosion(new Explosion(m_origin,
+                                                         MEMORYBOSS_COLOUR));
+                    GAME.AddEffect(explosion);
+                }
+            }
+        }
+    }
+
 
     /*************************************************************************
      * Knockback Boss                                                        *

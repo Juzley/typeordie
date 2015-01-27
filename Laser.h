@@ -18,7 +18,6 @@ namespace typing
         {
         }
 
-
         // Methods
         static void Init();
 

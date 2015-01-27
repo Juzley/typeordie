@@ -12,6 +12,75 @@ namespace typing
 {
     class ColourRGBA;
 
+    // The memory boss hides the displays the phrase only for a short period,
+    // and then the player must type the phrase from memory.
+    class MemoryBoss : public Entity
+    {
+    public:
+        void OnSpawn();
+        void Update();
+        void Draw2D();
+        void Draw3D();
+        void OnType(char c, bool *hit, bool *phraseFinished);
+
+        const juzutil::Vector3& GetOrigin() const
+        {
+            return m_origin;
+        }
+
+        bool IsSolid() const
+        {
+            return (false);
+        }
+
+        char GetStartChar() const
+        {
+            return m_phrase.GetStartChar();
+        }
+
+        bool StartsWith(const char c) const
+        {
+            return (GetStartChar() == c);
+        }
+
+        bool IsPhraseSingle() const
+        {
+            return (m_phrase.Length() == 1);
+        }
+
+        float GetTypingSpeed() const
+        {
+            return m_phrase.GetTypingSpeed();
+        }
+
+        bool Unlink() const
+        {
+            return (m_health == 0);
+        }
+
+        unsigned int GetScore() const
+        {
+            return MEMORYBOSS_SCORE;
+        }
+
+    protected:
+        typedef enum {
+            MEMORYBOSS_MOVING,
+            MEMORYBOSS_LEARN,
+            MEMORYBOSS_TYPE
+        } MemoryBossState;
+
+        static const unsigned int MEMORYBOSS_SCORE = 50;
+        static const unsigned int MEMORYBOSS_HEALTH = 8;
+
+        unsigned int     m_health;
+        juzutil::Vector3 m_origin;
+        Phrase           m_phrase;
+        MemoryBossState  m_state;
+        float            m_stateChangeTime;
+    };
+
+
     // The Knockback boss keeps moving towards the player but gets knocked
     // back by the player completing the phrase.
     class KnockbackBoss : public Entity
@@ -310,6 +379,7 @@ namespace typing
     typedef BossEnemyWave<KnockbackBoss> KnockbackBossEnemyWave;
     typedef BossEnemyWave<BackwardsKnockbackBoss>
                                         BackwardsKnockbackBossEnemyWave;
+    typedef BossEnemyWave<MemoryBoss> MemoryBossEnemyWave;
 
 
 }

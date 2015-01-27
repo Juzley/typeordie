@@ -29,6 +29,8 @@ namespace typing
         typedef enum {
             PHRASE_DRAW_DEFAULT,
             PHRASE_DRAW_BACKWARDS,
+            PHRASE_DRAW_BLOCKED,
+            PHRASE_DRAW_HIDDEN,
         } PhraseDrawOption;
 
         bool OnType(char c, float time);

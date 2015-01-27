@@ -128,6 +128,7 @@ namespace typing
         m_bossWaveCreator.AddWave<KnockbackBossEnemyWave>();
         m_bossWaveCreator.AddWave<MissileBossEnemyWave>();
         m_bossWaveCreator.AddWave<ChargeBossEnemyWave>();
+        m_bossWaveCreator.AddWave<MemoryBossEnemyWave>();
         m_bossWaveCreator.AddWave<BackwardsKnockbackBossEnemyWave>();
 
         // Initialise powerups
@@ -273,8 +274,15 @@ namespace typing
         const float MAX_Y = 500.0f;
 
         if (GetTime() >= m_nextPowerupTime) {
-            AddEntity(m_powerups.Create(juzutil::Vector2(RAND.Range(MIN_X, MAX_X), RAND.Range(MIN_Y, MAX_Y))));
-            m_nextPowerupTime = GetTime() + RAND.Range(MIN_POWERUP_SPAWN_TIME, MAX_POWERUP_SPAWN_TIME);
+            // Skip the powerup if a boss is active. Sorry!
+            if (!m_bossWaveActive) {
+                AddEntity(m_powerups.Create(
+                    juzutil::Vector2(RAND.Range(MIN_X, MAX_X),
+                                     RAND.Range(MIN_Y, MAX_Y))));
+            }
+            m_nextPowerupTime =
+                GetTime() +
+                RAND.Range(MIN_POWERUP_SPAWN_TIME, MAX_POWERUP_SPAWN_TIME);
         }
     }
 

@@ -38,11 +38,12 @@ namespace typing
     void Phrase::Draw(const juzutil::Vector3& origin,
                       PhraseDrawOption        option)
     {
-        const float height =
-            PHRASE_HEIGHT * APP.GetOption<float>("text-scale");
 
         if (!m_phrase.empty()) {
-            const juzutil::Vector2 coords = GAME.GetCam().PerspectiveProject(origin);
+            const float height =
+                            PHRASE_HEIGHT * APP.GetOption<float>("text-scale");
+            const juzutil::Vector2 coords =
+                            GAME.GetCam().PerspectiveProject(origin);
 
             std::string typed;
             std::string remaining;
@@ -81,31 +82,44 @@ namespace typing
                      height + PHRASE_BORDER_GAP * 2);
 
             // Draw the text
+            ColourRGBA textColour;
+            if (option == PHRASE_DRAW_BLOCKED) {
+                textColour[ColourRGBA::COLOUR_RED] = 0.4f;
+                textColour[ColourRGBA::COLOUR_GREEN] = 0.4f;
+                textColour[ColourRGBA::COLOUR_BLUE] = 0.4f;
+                textColour[ColourRGBA::COLOUR_ALPHA] = 1.0f;
+            } else {
+                textColour = ColourRGBA::White();
+            }
+
             FONTS.Print(PHRASE_FONT,
                         0.0f, 0.0f, height,
                         ColourRGBA::Red(),
                         Font::ALIGN_LEFT,
                         typed);
-            FONTS.Print(PHRASE_FONT,
-                        typedWidth, 0.0f, height,
-                        ColourRGBA::White(),
-                        Font::ALIGN_LEFT,
-                        remaining);
+
+            if (option != PHRASE_DRAW_HIDDEN) {
+                FONTS.Print(PHRASE_FONT,
+                            typedWidth, 0.0f, height,
+                            textColour,
+                            Font::ALIGN_LEFT,
+                            remaining);
+            }
 
             // Draw the corners of the backing
             x = -PHRASE_BORDER_GAP;
             y = -PHRASE_BORDER_GAP;
-            DrawLine(ColourRGBA::White(), x, y, x, y + PHRASE_BORDER_LINE_LENGTH);
-            DrawLine(ColourRGBA::White(), x, y, x + PHRASE_BORDER_LINE_LENGTH, y);
+            DrawLine(textColour, x, y, x, y + PHRASE_BORDER_LINE_LENGTH);
+            DrawLine(textColour, x, y, x + PHRASE_BORDER_LINE_LENGTH, y);
             x += totalWidth + PHRASE_BORDER_GAP * 2;
-            DrawLine(ColourRGBA::White(), x, y, x, y + PHRASE_BORDER_LINE_LENGTH);
-            DrawLine(ColourRGBA::White(), x, y, x - PHRASE_BORDER_LINE_LENGTH, y);
+            DrawLine(textColour, x, y, x, y + PHRASE_BORDER_LINE_LENGTH);
+            DrawLine(textColour, x, y, x - PHRASE_BORDER_LINE_LENGTH, y);
             y += height + PHRASE_BORDER_GAP * 2;
-            DrawLine(ColourRGBA::White(), x, y, x, y - PHRASE_BORDER_LINE_LENGTH);
-            DrawLine(ColourRGBA::White(), x, y, x - PHRASE_BORDER_LINE_LENGTH, y);
+            DrawLine(textColour, x, y, x, y - PHRASE_BORDER_LINE_LENGTH);
+            DrawLine(textColour, x, y, x - PHRASE_BORDER_LINE_LENGTH, y);
             x -= totalWidth + PHRASE_BORDER_GAP * 2;
-            DrawLine(ColourRGBA::White(), x, y, x, y - PHRASE_BORDER_LINE_LENGTH);
-            DrawLine(ColourRGBA::White(), x, y, x + PHRASE_BORDER_LINE_LENGTH, y);
+            DrawLine(textColour, x, y, x, y - PHRASE_BORDER_LINE_LENGTH);
+            DrawLine(textColour, x, y, x + PHRASE_BORDER_LINE_LENGTH, y);
 
             glPopMatrix();
         }
