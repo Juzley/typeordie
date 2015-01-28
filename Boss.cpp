@@ -21,11 +21,11 @@ namespace typing
      * Memory Boss                                                           *
      *************************************************************************/
 
-    const unsigned int MEMORYBOSS_WORD_COUNT = 4;
+    const unsigned int MEMORYBOSS_WORD_COUNT = 3;
     const enum PhraseBook::PhraseLength MEMORYBOSS_PHRASE_LENGTH =
                                                         PhraseBook::PL_SHORT;
-    const ColourRGBA MEMORYBOSS_COLOUR(0.6f, 1.0f, 0.6f, 0.4f);
-    const ColourRGBA MEMORYBOSS_LINE_COLOUR(0.6f, 1.0f, 0.6f, 1.0f);
+    const ColourRGBA MEMORYBOSS_COLOUR(0.4f, 1.0f, 0.4f, 0.4f);
+    const ColourRGBA MEMORYBOSS_LINE_COLOUR(0.4f, 1.0f, 0.4f, 1.0f);
     const float MEMORYBOSS_LEARN_TIME = 3.0f;
     const float MEMORYBOSS_TYPE_TIME = 5.0f;
 
@@ -138,13 +138,13 @@ namespace typing
      * Knockback Boss                                                        *
      *************************************************************************/
 
-    const float KnockbackBoss::KNOCKBACKBOSS_ADVANCE_SPEED = 110.0f; 
+    const float KnockbackBoss::KNOCKBACKBOSS_ADVANCE_SPEED = 90.0f; 
     const float KNOCKBACKBOSS_KNOCKBACK_DISTANCE = 250.0f;
     const unsigned int KNOCKBACKBOSS_WORD_COUNT = 2;
     const enum PhraseBook::PhraseLength KNOCKBACKBOSS_PHRASE_LENGTH =
                                                         PhraseBook::PL_SHORT;
-    const ColourRGBA KNOCKBACKBOSS_COLOUR(0.6f, 0.6f, 1.0f, 0.4f);
-    const ColourRGBA KNOCKBACKBOSS_LINE_COLOUR(0.6f, 0.6f, 1.0f, 1.0f);
+    const ColourRGBA KNOCKBACKBOSS_COLOUR(0.4f, 0.4f, 1.0f, 0.4f);
+    const ColourRGBA KNOCKBACKBOSS_LINE_COLOUR(0.4f, 0.4f, 1.0f, 1.0f);
 
     void KnockbackBoss::OnSpawn()
     {
@@ -168,8 +168,7 @@ namespace typing
             glPushMatrix();
                 glTranslatef(0.0f, 100.0f, 0.0f);
                 glScalef(30.0f, 100.0f, 30.0f);
-                DrawPyramid(KNOCKBACKBOSS_COLOUR,
-                            KNOCKBACKBOSS_LINE_COLOUR);
+                DrawPyramid(KNOCKBACKBOSS_COLOUR, KNOCKBACKBOSS_LINE_COLOUR);
             glPopMatrix();
         glPopMatrix();
     }
@@ -303,7 +302,7 @@ namespace typing
             glPushMatrix();
                 glTranslatef(0.0f, 100.0f, 0.0f);
                 glScalef(30.0f, 100.0f, 30.0f);
-                DrawPyramid(m_colour);
+                DrawPyramid(m_colour, ColourRGBA::White());
             glPopMatrix();
         glPopMatrix();
     }
@@ -372,8 +371,10 @@ namespace typing
      * Missile Boss                                                          *
      *************************************************************************/
 
-    const float            MissileBoss::MISSILEBOSS_WAVE_GAP     = 4.0f;
-    const float            MissileBoss::MISSILEBOSS_MISSILE_GAP  = 0.5f;   
+    const float            MissileBoss::MISSILEBOSS_WAVE_GAP     = 5.0f;
+    const float            MissileBoss::MISSILEBOSS_MISSILE_GAP  = 0.7f;
+    const ColourRGBA MISSILEBOSS_COLOUR(0.7f, 0.2f, 1.0f, 0.4f);
+    const ColourRGBA MISSILEBOSS_LINE_COLOUR(0.7f, 0.2f, 1.0f, 1.0f);
 
     void MissileBoss::OnSpawn()
     {
@@ -398,7 +399,7 @@ namespace typing
             glPushMatrix();
             glTranslatef(0.0f, 100.0f, 0.0f);
             glScalef(30.0f, 100.0f, 30.0f);
-            DrawPyramid(ColourRGBA::White());
+            DrawPyramid(MISSILEBOSS_COLOUR, MISSILEBOSS_LINE_COLOUR);
             glPopMatrix();
         glPopMatrix();
     }

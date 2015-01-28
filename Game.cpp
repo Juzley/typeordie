@@ -38,10 +38,10 @@ namespace typing
     static const float WAVE_INTERVAL_BASE = 10.0f;
 
     // The amount of that the wave interval decreases by each level.
-    static const float WAVE_INTERVAL_SCALE = 1.0f;
+    static const float WAVE_INTERVAL_SCALE = 0.7f;
 
     // The minimum interval between waves.
-    static const float WAVE_INTERVAL_MIN = 4.0f;
+    static const float WAVE_INTERVAL_MIN = 3.0f;
 
     // The length of time to pause before starting a wave at the start of a
     // game.
@@ -122,8 +122,8 @@ namespace typing
         m_waveCreator.AddWave<BasicEnemyWave>(0);
         m_waveCreator.AddWave<MissileEnemyWave>(1);
         m_waveCreator.AddWave<AccelEnemyWave>(2);
-        m_waveCreator.AddWave<BombEnemyWave>(3);
-        m_waveCreator.AddWave<SeekerEnemyWave>(4);
+        m_waveCreator.AddWave<SeekerEnemyWave>(3);
+        m_waveCreator.AddWave<BombEnemyWave>(4);
 
         m_bossWaveCreator.AddWave<KnockbackBossEnemyWave>();
         m_bossWaveCreator.AddWave<MissileBossEnemyWave>();

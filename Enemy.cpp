@@ -234,8 +234,8 @@ namespace typing
     // MissileEnemy
     ////////////////////////////////////////////////////////////////////////////
 
-    const float            MissileEnemy::MISSILEENEMY_SPEED     = 60.0f;
-    const float            MissileEnemy::MISSILEENEMY_FIREPAUSE = 3.0f;
+    const float            MissileEnemy::MISSILEENEMY_SPEED     = 80.0f;
+    const float            MissileEnemy::MISSILEENEMY_FIREPAUSE = 4.0f;
     const ColourRGBA       MissileEnemy::MISSILEENEMY_COLOUR(1.0f, 0.20f, 0.0f, 0.4f);
     const ColourRGBA       MissileEnemy::MISSILEENEMY_OUTLINECOLOUR(1.0f, 0.9f, 0.8f, 1.0f);
 
@@ -298,7 +298,8 @@ namespace typing
 
         if (*phraseFinished) {
             GAME.MakeCharAvail(m_phrase.GetStartChar());
-            GAME.AddEffect(ExplosionPtr(new Explosion(m_origin, MISSILEENEMY_COLOUR)));
+            GAME.AddEffect(ExplosionPtr(new Explosion(m_origin,
+                                                      MISSILEENEMY_COLOUR)));
             m_unlink = true;
         }
     }
@@ -333,10 +334,13 @@ namespace typing
     void BombEnemy::Draw3D()
     {
         ColourRGBA outlineColour(BOMB_OUTLINECOLOUR);
-        const float blinkTime = (GAME.GetTime() - m_spawnTime) - (BOMB_DETONATE_TIME - BOMB_BLINK_TIME);
+        const float blinkTime = (GAME.GetTime() - m_spawnTime) -
+                                    (BOMB_DETONATE_TIME - BOMB_BLINK_TIME);
         if (blinkTime > 0.0f) {
-            outlineColour[ColourRGBA::COLOUR_ALPHA] = BOMB_OUTLINECOLOUR.GetAlpha() *
-                abs(cosf((blinkTime / BOMB_BLINK_TIME) * static_cast<float>(M_PI) * BOMB_BLINK_SPEED));
+            outlineColour[ColourRGBA::COLOUR_ALPHA] =
+                BOMB_OUTLINECOLOUR.GetAlpha() *
+                    abs(cosf((blinkTime / BOMB_BLINK_TIME) *
+                             static_cast<float>(M_PI) * BOMB_BLINK_SPEED));
         }
 
         glPushMatrix();

@@ -157,7 +157,7 @@ namespace typing
     void MissileEnemyWave::Spawn()
     {
         const float SPAWN_GAP = 1.0f;
-        const float SPAWN_Y_BASE = 500.0f;
+        const float SPAWN_Y_BASE = 800.0f;
         const float SPAWN_Y_GAP  = 100.0f;
 
         if (m_enemyCount > m_enemies.size() &&
