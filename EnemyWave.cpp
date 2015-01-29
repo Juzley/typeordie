@@ -177,7 +177,7 @@ namespace typing
             y = RAND.Range(SPAWN_Y_MIN, SPAWN_Y_MAX);
 
             MissileEnemyPtr enemy(
-                new MissileEnemy(GAME.GetComboPhrase(2 + GAME.Cycles(),
+                new MissileEnemy(GAME.GetComboPhrase(2 + GAME.GetCycles(),
                                                      PhraseBook::PL_SHORT),
                                  juzutil::Vector3(x, y, 0.0f),
                                  dir));
