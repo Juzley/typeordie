@@ -24,12 +24,6 @@ namespace typing
     class Game
     {
     public:
-        // Consts/Enums
-        static const float GAME_SCREEN_TOP;
-        static const float GAME_SCREEN_BOTTOM;
-        static const float GAME_SCREEN_LEFT;
-        static const float GAME_SCREEN_RIGHT;
-
         // Methods
         void Init();
         void Update();

@@ -54,7 +54,8 @@ namespace typing
     }
 
 
-    const juzutil::Vector2 Camera::PerspectiveProject(const juzutil::Vector3& worldCoords) const
+    const juzutil::Vector2 Camera::PerspectiveProject(
+                                    const juzutil::Vector3& worldCoords) const
     {
         int view[4];
         glGetIntegerv(GL_VIEWPORT, view);
@@ -70,6 +71,46 @@ namespace typing
     
         return juzutil::Vector2(
             coords.x, static_cast<float>(APP.GetScreenHeight()) - coords.y);
+    }
+
+
+    const juzutil::Vector3 Camera::UnPerspectiveProject(
+                                    const juzutil::Vector2& screenCoords,
+                                    const float             worldCoordsZ) const
+    {
+        int view[4];
+        glGetIntegerv(GL_VIEWPORT, view);
+
+        // Unproject to the near and far clip plane and use the two values to
+        // work out how much to adjust the result by to end up at the required
+        // Z value in world coords.
+        glm::vec3 worldCoordsNear =
+            glm::unProject(
+                glm::vec3(screenCoords[0],
+                          static_cast<float>(APP.GetScreenHeight()) -
+                                                            screenCoords[1],
+                          0.0f),
+                m_modelview,
+                m_projection,
+                glm::vec4(view[0], view[1], view[2], view[3]));
+
+        glm::vec3 worldCoordsFar =
+            glm::unProject(
+                glm::vec3(screenCoords[0],
+                          static_cast<float>(APP.GetScreenHeight()) -
+                                                            screenCoords[1],
+                          1.0f),
+                m_modelview,
+                m_projection,
+                glm::vec4(view[0], view[1], view[2], view[3]));
+
+        glm::vec3 nearToFar = worldCoordsFar - worldCoordsNear;
+        float ratio = (0.0f - worldCoordsNear.z) / nearToFar.z;
+        glm::vec3 worldCoords(worldCoordsNear.x + (worldCoordsFar.x - worldCoordsNear.x) * ratio,
+                              worldCoordsNear.y + (worldCoordsFar.y - worldCoordsNear.y) * ratio,
+                              worldCoordsNear.z + (worldCoordsFar.z - worldCoordsNear.z) * ratio);
+
+        return juzutil::Vector3(worldCoords.x, worldCoords.y, worldCoords.z);
     }
 
 

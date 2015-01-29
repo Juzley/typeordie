@@ -167,19 +167,32 @@ namespace typing
             juzutil::Vector3 dir;
 
             if (m_enemies.size() % 2 == 0) {
-                x = Game::GAME_SCREEN_RIGHT;
+                x = APP.GetScreenWidth();
                 dir.Set(-1.0f, 0.0f, 0.0f);
             } else {
-                x = Game::GAME_SCREEN_LEFT;
+                x = 0.0f;
                 dir.Set(1.0f, 0.0f, 0.0f);
             }
 
             y = RAND.Range(SPAWN_Y_MIN, SPAWN_Y_MAX);
 
+            // Determine where the edge of the screen is. There is definitely
+            // a better way of doing this, but we'll use a slightly hacky
+            // way using the functions already available in the Camera class:
+            // Project the y-coordinate of the spawn position to screen coords,
+            // then unproject this y-coordinate at the edge of the screen to
+            // find the world coords of the screen edge at that y-coordinate.
+            juzutil::Vector2 screenCoords =
+                            GAME.GetCam().PerspectiveProject(
+                                        juzutil::Vector3(0.0f, y, 0.0f));
+            screenCoords[0] = x;
+            juzutil::Vector3 start =
+                        GAME.GetCam().UnPerspectiveProject(screenCoords, 0.0f);
+
             MissileEnemyPtr enemy(
                 new MissileEnemy(GAME.GetComboPhrase(2 + GAME.GetCycles(),
                                                      PhraseBook::PL_SHORT),
-                                 juzutil::Vector3(x, y, 0.0f),
+                                 start,
                                  dir));
             m_enemies.push_back(enemy);
             GAME.AddEntity(enemy);

@@ -268,7 +268,7 @@ namespace typing
     {
     public:
         MissileEnemy(const std::string& phrase, const juzutil::Vector3& origin, const juzutil::Vector3& dir)
-            : m_phrase(phrase), m_origin(origin), m_dir(dir), m_unlink(false)
+            : m_phrase(phrase), m_origin(origin), m_startOrigin(origin), m_dir(dir), m_unlink(false)
         {
         }
 
@@ -331,6 +331,7 @@ namespace typing
         // Members
         Phrase           m_phrase;
         juzutil::Vector3 m_origin;
+        juzutil::Vector3 m_startOrigin;
         juzutil::Vector3 m_dir;
         bool             m_unlink;
         float            m_angle;

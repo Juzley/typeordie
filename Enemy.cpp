@@ -259,7 +259,7 @@ namespace typing
 
             glPushMatrix();
                 glTranslatef(0.0f, 0.0f, -8.0f);
-                glScalef(30.0f, 20.0f, 20.0f);
+                glScalef(30.0f, 20.0f, 10.0f);
                 DrawCube(MISSILEENEMY_COLOUR, MISSILEENEMY_OUTLINECOLOUR);
             glPopMatrix();
         glPopMatrix();
@@ -269,16 +269,17 @@ namespace typing
     {
         m_angle = (atan2(m_dir[0], -m_dir[1]) / static_cast<float>(M_PI) * 180.0f);
         m_lastFireTime = GAME.GetTime() - MISSILEENEMY_FIREPAUSE / 2.0f;
+
     }
 
     void MissileEnemy::Update()
     {
         m_origin += m_dir * (MISSILEENEMY_SPEED * GAME.GetFrameTime());
 
-        if ((m_dir[0] > 0 && m_origin[0] > Game::GAME_SCREEN_RIGHT) ||
-            (m_dir[0] < 0 && m_origin[0] < Game::GAME_SCREEN_LEFT) ||
-            (m_dir[1] > 0 && m_origin[1] > Game::GAME_SCREEN_TOP) ||
-            (m_dir[1] < 0 && m_origin[1] < Game::GAME_SCREEN_BOTTOM)) {
+        // Assume that this enemy will go off the left of the screen or the
+        // right, rather than the bottom or top.
+        if ((m_dir[0] > 0 && m_origin[0] > -m_startOrigin[0]) ||
+            (m_dir[0] < 0 && m_origin[0] < -m_startOrigin[0])) {
             GAME.MakeCharAvail(m_phrase.GetStartChar());
             m_unlink = true;
         }

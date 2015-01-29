@@ -12,7 +12,11 @@ namespace typing
         Camera(const juzutil::Vector3& origin, const juzutil::Vector3& lookat);
         
         void ApplyPerspective();
-        const juzutil::Vector2 PerspectiveProject(const juzutil::Vector3& worldCoords) const;
+        const juzutil::Vector2 PerspectiveProject(
+                                const juzutil::Vector3& worldCoords) const;
+        const juzutil::Vector3 UnPerspectiveProject(
+                                const juzutil::Vector2& screenCoords,
+                                const float             worldCoordsZ) const;
 
         void ApplyOrtho() const;
 
