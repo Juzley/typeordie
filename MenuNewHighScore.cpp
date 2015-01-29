@@ -105,7 +105,7 @@ namespace typing
 
     void NewHighScoreMenu::OnType(char c)
     {
-        if (m_name.length() < MAX_NAME_LENGTH) {
+        if (c != ' ' && m_name.length() < MAX_NAME_LENGTH) {
             m_name += c;
         } else {
             SOUNDS.Play(ERROR_SOUND);
