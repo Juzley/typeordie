@@ -38,10 +38,7 @@ namespace typing
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glm::mat4 projection = glm::perspective(
-                                1.30899694f, 
-                                static_cast<float>(APP.GetScreenWidth()) /
-                                static_cast<float>(APP.GetScreenHeight()),
-                                0.1f, 10000.0f);
+                                    1.30899694f, 4.0f/3.0f, 0.1f, 10000.0f);
         glLoadMatrixf(glm::value_ptr(projection));
 
         glMatrixMode(GL_MODELVIEW);

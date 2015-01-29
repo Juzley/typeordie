@@ -53,7 +53,7 @@ namespace typing
         const float ENTRY_TIME             = 0.1f;
         const float NAME_X                 = 55.0f;
         const float SCORE_X                = 150.0f;
-        const float STREAK_X               = 650.0f;
+        const float STREAK_X               = APP.GetScreenWidth() - 150.0f;
 
         // Background
         DrawTexturedRect(BACKGROUND, 0.0f, 0.0f, APP.GetScreenWidth(), APP.GetScreenHeight());

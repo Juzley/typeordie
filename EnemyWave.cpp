@@ -156,9 +156,9 @@ namespace typing
 
     void MissileEnemyWave::Spawn()
     {
-        const float SPAWN_GAP = 1.0f;
-        const float SPAWN_Y_BASE = 800.0f;
-        const float SPAWN_Y_GAP  = 100.0f;
+        const float SPAWN_GAP = 1.5f;
+        const float SPAWN_Y_MIN = 900.0f;
+        const float SPAWN_Y_MAX = 500.0f;
 
         if (m_enemyCount > m_enemies.size() &&
             m_nextSpawnTime <= GAME.GetTime()) {
@@ -174,10 +174,11 @@ namespace typing
                 dir.Set(1.0f, 0.0f, 0.0f);
             }
 
-            y = SPAWN_Y_BASE + SPAWN_Y_GAP * m_enemies.size();
+            y = RAND.Range(SPAWN_Y_MIN, SPAWN_Y_MAX);
 
             MissileEnemyPtr enemy(
-                new MissileEnemy(GAME.GetComboPhrase(2, PhraseBook::PL_MEDIUM),
+                new MissileEnemy(GAME.GetComboPhrase(2 + GAME.Cycles(),
+                                                     PhraseBook::PL_SHORT),
                                  juzutil::Vector3(x, y, 0.0f),
                                  dir));
             m_enemies.push_back(enemy);

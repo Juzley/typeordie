@@ -65,10 +65,11 @@ namespace typing
     // The maximum streak that counts towards the score multiplier.
     static const unsigned int MAX_COMBO = 4;
 
+    // TODO: Should really calculate these from the camera
     const float       Game::GAME_SCREEN_TOP = 1000.0f;
     const float       Game::GAME_SCREEN_BOTTOM = -100.0f;
-    const float       Game::GAME_SCREEN_LEFT = -775.0f;
-    const float       Game::GAME_SCREEN_RIGHT = 775.0f;
+    const float       Game::GAME_SCREEN_LEFT = -800.0f;
+    const float       Game::GAME_SCREEN_RIGHT = 800.0f;
     const float       Game::FINAL_DEATH_PAUSE = 2.0f;
     const float       Game::MIN_POWERUP_SPAWN_TIME = 30.0f;
     const float       Game::MAX_POWERUP_SPAWN_TIME = 180.0f;
