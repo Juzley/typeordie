@@ -105,13 +105,25 @@ namespace typing
         float y =
             APP.GetScreenHeight() - 3.0f * ITEM_HEIGHT - 7.0f * ITEM_SPACING;
 
-        AddMenuItem(MenuItemPtr(new MenuItem(juzutil::Vector2(x, y), "Start Game",  MENUITEM_START,  ITEM_HEIGHT, true)));
+        AddMenuItem(MenuItemPtr(new MenuItem(juzutil::Vector2(x, y),
+                                             "Start Game", 
+                                             MENUITEM_START,
+                                             ITEM_HEIGHT,
+                                             true)));
         y += ITEM_HEIGHT + ITEM_SPACING;
 
-        AddMenuItem(MenuItemPtr(new MenuItem(juzutil::Vector2(x, y), "High Scores", MENUITEM_SCORES, ITEM_HEIGHT, false)));
+        AddMenuItem(MenuItemPtr(new MenuItem(juzutil::Vector2(x, y),
+                                             "High Scores",
+                                             MENUITEM_SCORES,
+                                             ITEM_HEIGHT,
+                                             false)));
         y += ITEM_HEIGHT + ITEM_SPACING;
 
-        AddMenuItem(MenuItemPtr(new MenuItem(juzutil::Vector2(x, y), "Quit",        MENUITEM_QUIT,   ITEM_HEIGHT, false)));
+        AddMenuItem(MenuItemPtr(new MenuItem(juzutil::Vector2(x, y),
+                                             "Quit",
+                                             MENUITEM_QUIT,
+                                             ITEM_HEIGHT,
+                                             false)));
     }
 
     void MainMenu::Draw()
@@ -126,8 +138,18 @@ namespace typing
             APP.GetScreenWidth(), APP.GetScreenHeight() - y + ITEM_SPACING);
 
         // Draw the version number
-        FONTS.Print(VERSION_FONT, APP.GetScreenWidth(), APP.GetScreenHeight() - 12.0f, 12.0f, ColourRGBA::White(), Font::ALIGN_RIGHT,
-                    (boost::format("v%1%.%2% - %3%") % App::MAJOR_VERSION % App::MINOR_VERSION % __DATE__).str());
+        using namespace boost;
+        FONTS.Print(VERSION_FONT,
+                    APP.GetScreenWidth(),
+                    APP.GetScreenHeight() - 12.0f,
+                    12.0f,
+                    ColourRGBA::White(),
+                    Font::ALIGN_RIGHT,
+                    str(format("v%1%.%2%%3% - %4%")
+                        % App::MAJOR_VERSION
+                        % App::MINOR_VERSION
+                        % App::PRE_RELEASE_STRING
+                        % __DATE__));
 
         // Draw the menu items
         MenuScreen::Draw();

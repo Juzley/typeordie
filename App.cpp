@@ -13,6 +13,7 @@ namespace typing
 {
     const unsigned int App::MAJOR_VERSION  = 1;
     const unsigned int App::MINOR_VERSION  = 0;
+    const std::string  App::PRE_RELEASE_STRING(".beta");
 
     std::auto_ptr<App> App::m_singleton(new App());
     App& App::GetApp ()

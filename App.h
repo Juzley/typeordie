@@ -17,6 +17,7 @@ namespace typing
         // Consts/Enums
         static const unsigned int MAJOR_VERSION;
         static const unsigned int MINOR_VERSION;
+        static const std::string  PRE_RELEASE_STRING;
 
         enum LogLevel { LOG_ERROR, LOG_DEBUG };
 
