@@ -84,6 +84,15 @@ namespace typing
                 m_index = 0;
             }
 
+            unsigned int Cycles() const
+            {
+                if (m_waves.empty()) {
+                    return 0;
+                } else {
+                    return static_cast<unsigned int>(m_index / m_waves.size());
+                }
+            }
+
         private:
             typedef std::vector<WaveCreateFn> WaveCreateVec;
 

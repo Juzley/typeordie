@@ -72,8 +72,9 @@ namespace typing
             m_origin += dir * (BOSS_ENTRY_SPEED * GAME.GetFrameTime());
 
             if (m_origin.Equals(BOSS_DEST_ORIGIN, BOSS_DEST_EPSILON)) {
-                m_phrase.Reset(GAME.GetComboPhrase(MEMORYBOSS_WORD_COUNT,
-                                                   MEMORYBOSS_PHRASE_LENGTH));
+                m_phrase.Reset(GAME.GetComboPhrase(
+                                    MEMORYBOSS_WORD_COUNT + GAME.GetCycles(),
+                                    MEMORYBOSS_PHRASE_LENGTH));
                 m_state = MEMORYBOSS_LEARN;
                 m_stateChangeTime = GAME.GetTime();
             }
@@ -96,8 +97,9 @@ namespace typing
                 GAME.AddEffect(laser);
 
                 GAME.MakeCharAvail(m_phrase.GetStartChar());
-                m_phrase.Reset(GAME.GetComboPhrase(MEMORYBOSS_WORD_COUNT,
-                                                   MEMORYBOSS_PHRASE_LENGTH));
+                m_phrase.Reset(GAME.GetComboPhrase(
+                                    MEMORYBOSS_WORD_COUNT + GAME.GetCycles(),
+                                    MEMORYBOSS_PHRASE_LENGTH));
 
                 m_state = MEMORYBOSS_LEARN;
                 m_stateChangeTime = GAME.GetTime();
@@ -119,8 +121,8 @@ namespace typing
 
                 if (--m_health > 0) {
                     m_phrase.Reset(GAME.GetComboPhrase(
-                                                MEMORYBOSS_WORD_COUNT,
-                                                MEMORYBOSS_PHRASE_LENGTH));
+                                    MEMORYBOSS_WORD_COUNT + GAME.GetCycles(),
+                                    MEMORYBOSS_PHRASE_LENGTH));
 
                     m_state = MEMORYBOSS_LEARN;
                     m_stateChangeTime = GAME.GetTime();
@@ -182,7 +184,7 @@ namespace typing
 
             if (m_origin.Equals(BOSS_DEST_ORIGIN, BOSS_DEST_EPSILON)) {
                 m_phrase.Reset(GAME.GetComboPhrase(
-                    KNOCKBACKBOSS_WORD_COUNT,
+                    KNOCKBACKBOSS_WORD_COUNT + GAME.GetCycles(),
                     KNOCKBACKBOSS_PHRASE_LENGTH));
                 m_moving = false;
             }
@@ -204,7 +206,7 @@ namespace typing
                 m_health--;
                 if (m_health > 0) {
                     m_phrase.Reset(GAME.GetComboPhrase(
-                        KNOCKBACKBOSS_WORD_COUNT,
+                        KNOCKBACKBOSS_WORD_COUNT + GAME.GetCycles(),
                         KNOCKBACKBOSS_PHRASE_LENGTH));
 
                     // Knock the boss back
@@ -228,8 +230,9 @@ namespace typing
         GAME.AddEffect(explosion);
         // When the boss hits the player, move it back to the start and reset
         // the phrase.
-        m_phrase.Reset(GAME.GetComboPhrase(KNOCKBACKBOSS_WORD_COUNT,
-                                           KNOCKBACKBOSS_PHRASE_LENGTH));
+        m_phrase.Reset(GAME.GetComboPhrase(
+                                KNOCKBACKBOSS_WORD_COUNT + GAME.GetCycles(),
+                                KNOCKBACKBOSS_PHRASE_LENGTH));
         m_origin = BOSS_DEST_ORIGIN;
     }
 
@@ -256,6 +259,7 @@ namespace typing
     // quicker as the boss gets closer to death.
     const float ChargeBoss::CHARGEBOSS_BASE_CHARGE_TIME  = 10.0f;
     const float ChargeBoss::CHARGEBOSS_CHARGE_TIME_SCALE = 0.5f;
+    const unsigned int CHARGEBOSS_WORD_COUNT = 3;
     const std::string CHARGEBOSS_FIRE_SOUND("sounds/explosion.wav");
     const std::string CHARGEBOSS_CHARGE_SOUND("sounds/charge.wav");
     const float       CHARGEBOSS_CHARGE_SOUND_LENGTH = 3.0f;
@@ -316,7 +320,9 @@ namespace typing
 
             m_moving = !m_origin.Equals(BOSS_DEST_ORIGIN, BOSS_DEST_EPSILON);
             if (!m_moving) {
-                m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_LONG));
+                m_phrase.Reset(GAME.GetComboPhrase(
+                                   CHARGEBOSS_WORD_COUNT + GAME.GetCycles(),
+                                   PhraseBook::PL_LONG));
                 CalcNextChargeTime();
             }
         } else {
@@ -337,7 +343,9 @@ namespace typing
 
                 // If we failed to type the phrase in time, get a new phrase.
                 GAME.MakeCharAvail(m_phrase.GetStartChar());
-                m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_LONG));
+                m_phrase.Reset(GAME.GetComboPhrase(
+                                 CHARGEBOSS_WORD_COUNT + GAME.GetCycles(),
+                                 PhraseBook::PL_LONG));
 
                 SOUNDS.Play(CHARGEBOSS_FIRE_SOUND);
                 m_chargeSound.Stop();
@@ -355,7 +363,9 @@ namespace typing
             GAME.MakeCharAvail(m_phrase.GetStartChar());
             --m_health;
             if (m_health > 0) {
-                m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_LONG));
+                m_phrase.Reset(GAME.GetComboPhrase(
+                                 CHARGEBOSS_WORD_COUNT + GAME.GetCycles(),
+                                 PhraseBook::PL_LONG));
                 CalcNextChargeTime();
             } else {
                 ExplosionPtr explosion(new Explosion(m_origin, m_colour));
@@ -373,6 +383,7 @@ namespace typing
 
     const float            MissileBoss::MISSILEBOSS_WAVE_GAP     = 5.0f;
     const float            MissileBoss::MISSILEBOSS_MISSILE_GAP  = 0.7f;
+    const unsigned int MISSILEBOSS_WORD_COUNT = 3;
     const ColourRGBA MISSILEBOSS_COLOUR(0.7f, 0.2f, 1.0f, 0.4f);
     const ColourRGBA MISSILEBOSS_LINE_COLOUR(0.7f, 0.2f, 1.0f, 1.0f);
 
@@ -413,7 +424,9 @@ namespace typing
 
             m_moving = !m_origin.Equals(BOSS_DEST_ORIGIN, BOSS_DEST_EPSILON);
             if (!m_moving) {
-                m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_MEDIUM));
+                m_phrase.Reset(GAME.GetComboPhrase(
+                                MISSILEBOSS_WORD_COUNT + GAME.GetCycles(),
+                                PhraseBook::PL_MEDIUM));
 
                 m_nextMissileFireTime = GAME.GetTime();
             }
@@ -441,9 +454,12 @@ namespace typing
             GAME.MakeCharAvail(m_phrase.GetStartChar());
             --m_health;
             if (m_health > 0) {
-                m_phrase.Reset(GAME.GetComboPhrase(3, PhraseBook::PL_MEDIUM));
+                m_phrase.Reset(GAME.GetComboPhrase(
+                                    MISSILEBOSS_WORD_COUNT + GAME.GetCycles(),
+                                    PhraseBook::PL_MEDIUM));
             } else {
-                ExplosionPtr explosion(new Explosion(m_origin, ColourRGBA::White()));
+                ExplosionPtr explosion(new Explosion(m_origin,
+                                                     ColourRGBA::White()));
                 GAME.AddEffect(explosion);
             }
         }

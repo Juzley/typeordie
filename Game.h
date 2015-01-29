@@ -136,6 +136,11 @@ namespace typing
             m_player.ExtraLife();
         }
 
+        unsigned int GetCycles() const
+        {
+            return m_bossWaveCreator.Cycles();
+        }
+
         // Singleton implementation
         static Game& GetGame();
 
